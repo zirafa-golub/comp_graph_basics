@@ -1,0 +1,21 @@
+#pragma once
+
+#include "core/BasicTypes.h"
+
+namespace cg {
+class Ray {
+public:
+    Ray(glm::vec3 origin, glm::vec3 direction) : origin_(std::move(origin)), direction_(std::move(direction)) {}
+
+    Point evaluate(float t) const { return origin_ + t * direction_; }
+    const Point& origin() const { return origin_; }
+    const glm::vec3& direction() const { return direction_; }
+
+    bool operator==(const Ray& other) const = default;
+    bool operator!=(const Ray& other) const = default;
+
+private:
+    Point origin_;
+    glm::vec3 direction_;
+};
+} // namespace cg
