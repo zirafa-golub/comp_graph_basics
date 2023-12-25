@@ -21,50 +21,30 @@ public:
         bool operator!=(const Resolution&) const = default;
     };
 
-    class CameraModifier {
-    public:
-        CameraModifier(Camera& camera) : camera_(camera) {}
-        ~CameraModifier() { camera_.update(); }
-
-        CameraModifier& setViewDirection(const glm::vec3& viewDirection, const glm::vec3& upVector) {
-            camera_.setViewDirection(viewDirection, upVector);
-            return *this;
-        }
-        CameraModifier& setResolution(Resolution newRes) {
-            camera_.setResolution(newRes);
-            return *this;
-        }
-        CameraModifier& setViewPlaneSize(Size2d newSize) {
-            camera_.setViewPlaneSize(newSize);
-            return *this;
-        }
-
-    private:
-        Camera& camera_;
-    };
-
     Camera();
+    virtual ~Camera() = default;
 
     virtual Ray castRay(unsigned pixelX, unsigned pixelY) const = 0;
 
     const glm::vec3& viewDirection() const;
+    void setViewDirection(const glm::vec3& viewDirection, const glm::vec3& upVector);
+
     const glm::vec3& upVector() const;
+
     Resolution resolution() const;
+    void setResolution(Resolution newRes);
+
     Size2d viewPlaneSize() const;
+    void setViewPlaneSize(Size2d newSize);
+
     Size2d pixelSize() const;
 
-    CameraModifier modify() { return CameraModifier(*this); }
+    virtual void update();
 
 protected:
     const glm::vec3& rightVector() const;
 
-    virtual void update();
-
 private:
-    void setViewDirection(const glm::vec3& viewDirection, const glm::vec3& upVector);
-    void setResolution(Resolution newRes);
-    void setViewPlaneSize(Size2d newSize);
-
     glm::vec3 viewDirection_ = {1, 0, 0};
     glm::vec3 rightVector_;
     glm::vec3 upVector_ = {0, 1, 0};

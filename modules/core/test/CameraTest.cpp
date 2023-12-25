@@ -23,28 +23,26 @@ TEST(CameraTest, modify_shouldApplyModificationAfterScope) {
     Size2d initPixelSize = camera.pixelSize();
 
     Camera::Resolution initRes = camera.resolution();
-    Camera::Resolution newRes{2 * initRes.width, 3 * initRes.height};
-    glm::vec3 newDir = -camera.viewDirection();
-    glm::vec3 newUp = camera.upVector();
+    Camera::Resolution newRes{200, 300};
+    glm::vec3 newDir = {-2, 0, 0};
+    glm::vec3 newUp = {1, 0, 1};
     Size2d initViewPlane = camera.viewPlaneSize();
     Size2d newViewPlane{initViewPlane.width / 2, initViewPlane.height / 3};
 
-    {
-        auto modifier = camera.modify();
-        modifier.setResolution(newRes);
-        EXPECT_EQ(camera.resolution(), newRes);
-        modifier.setViewDirection(newDir, {1, 1, 0});
-        EXPECT_EQ(camera.viewDirection(), newDir);
-        modifier.setViewPlaneSize(newViewPlane);
-        EXPECT_EQ(camera.viewPlaneSize(), newViewPlane);
+    camera.setResolution(newRes);
+    EXPECT_EQ(camera.resolution(), newRes);
+    camera.setViewDirection(newDir, newUp);
+    EXPECT_EQ(camera.viewDirection(), newDir);
+    camera.setViewPlaneSize(newViewPlane);
+    EXPECT_EQ(camera.viewPlaneSize(), newViewPlane);
 
-        EXPECT_EQ(initRight, camera.rightVector());
-        EXPECT_EQ(initUp, camera.upVector());
-        EXPECT_EQ(initPixelSize, camera.pixelSize());
-    }
+    EXPECT_EQ(initRight, camera.rightVector());
+    EXPECT_EQ(initPixelSize, camera.pixelSize());
 
-    EXPECT_EQ(camera.rightVector(), glm::vec3({0, 0, -1}));
-    EXPECT_EQ(camera.upVector(), glm::vec3({0, 1, 0}));
+    camera.update();
+
+    EXPECT_EQ(camera.rightVector(), glm::vec3({0, 1, 0}));
+    EXPECT_EQ(camera.upVector(), glm::vec3({0, 0, 1}));
     EXPECT_EQ(camera.pixelSize(), Size2d(initPixelSize.width / 4, initPixelSize.height / 9));
     EXPECT_EQ(camera.updateCalls, 1);
 }
