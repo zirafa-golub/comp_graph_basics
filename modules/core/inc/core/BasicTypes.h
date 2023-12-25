@@ -1,8 +1,10 @@
 #pragma once
 
-#include <vector>
+#include "core/Angle.h"
 
 #include "glm/vec3.hpp"
+
+#include <vector>
 
 namespace cg {
 
