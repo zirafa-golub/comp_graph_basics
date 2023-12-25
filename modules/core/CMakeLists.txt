@@ -17,4 +17,4 @@ target_sources(core_test PRIVATE ${core_test_sources})
 target_link_libraries(core_test PRIVATE core gtest_main)
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}/test" FILES ${core_test_sources})
 
-add_test(NAME common_tests COMMAND core_test)
+add_test(NAME core_tests COMMAND core_test)
