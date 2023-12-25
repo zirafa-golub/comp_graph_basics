@@ -10,7 +10,7 @@ float Sphere::radius() const { return radius_; }
 std::expected<HitDesc, Error> Sphere::hit(const Ray& ray, float tStart, float tEnd) const {
     glm::vec3 originMinusCenter = ray.origin() - center();
 
-    // calulate quadratic eqaution parameters
+    // calulate quadratic equation parameters
     float a = glm::dot(ray.direction(), ray.direction());
     float b = 2 * glm::dot(ray.direction(), originMinusCenter);
     float c = glm::dot(originMinusCenter, originMinusCenter) - radius_ * radius_;
