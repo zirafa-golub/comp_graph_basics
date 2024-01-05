@@ -21,3 +21,5 @@ set(BUILD_GMOCK OFF CACHE BOOL "" FORCE)
 set(INSTALL_GTEST OFF CACHE BOOL "" FORCE)
 
 FetchContent_MakeAvailable(glm sdl googletest)
+
+add_subdirectory(tinyobjloader)
