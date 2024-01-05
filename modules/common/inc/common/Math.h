@@ -1,6 +1,7 @@
 #pragma once
 
 #include <array>
+#include <compare>
 
 namespace cg {
 struct QuadSolve {
@@ -14,4 +15,16 @@ struct QuadSolve {
 };
 
 QuadSolve solveQuadEquation(float a, float b, float c);
+
+template <typename T>
+    requires std::totally_ordered<T>
+bool isInRange(T value, T min, T max) {
+    return value > min && value < max;
+}
+
+template <typename T>
+    requires std::totally_ordered<T>
+bool isInRangeIncl(T value, T min, T max) {
+    return value >= min && value <= max;
+}
 } // namespace cg

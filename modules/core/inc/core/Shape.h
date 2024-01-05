@@ -21,6 +21,6 @@ class Shape : public Movable {
 public:
     virtual ~Shape() = default;
 
-    virtual std::expected<HitDesc, Error> hit(const Ray& ray, float t_start, float t_end) const = 0;
+    virtual std::expected<HitDesc, Error> hit(const Ray& ray, float tMin, float tMax) const = 0;
 };
 } // namespace cg

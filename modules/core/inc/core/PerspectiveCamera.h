@@ -10,7 +10,7 @@ public:
     void setFieldOfView(Angle fov);
 
     float viewPlaneDistance() const;
-    void setViewPlaneDistance(float distance); // TODO sta sa modify() iz base klase?
+    void setViewPlaneDistance(float distance);
 
     Ray castRay(unsigned pixelX, unsigned pixelY) const override;
 

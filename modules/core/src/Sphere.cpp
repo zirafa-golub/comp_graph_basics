@@ -7,7 +7,7 @@ const Point& Sphere::center() const { return position(); }
 
 float Sphere::radius() const { return radius_; }
 
-std::expected<HitDesc, Error> Sphere::hit(const Ray& ray, float tStart, float tEnd) const {
+std::expected<HitDesc, Error> Sphere::hit(const Ray& ray, float tMin, float tMax) const {
     glm::vec3 originMinusCenter = ray.origin() - center();
 
     // calulate quadratic equation parameters
@@ -18,17 +18,15 @@ std::expected<HitDesc, Error> Sphere::hit(const Ray& ray, float tStart, float tE
     QuadSolve quadSolve = solveQuadEquation(a, b, c);
 
     if (quadSolve.count > 0) {
-        if (isInRange(quadSolve.solutions[0], tStart, tEnd)) {
+        if (isInRangeIncl(quadSolve.solutions[0], tMin, tMax)) {
             return formHitDesc(ray, quadSolve.solutions[0]);
-        } else if (quadSolve.count == 2 && isInRange(quadSolve.solutions[1], tStart, tEnd)) {
+        } else if (quadSolve.count == 2 && isInRangeIncl(quadSolve.solutions[1], tMin, tMax)) {
             return formHitDesc(ray, quadSolve.solutions[1]);
         }
     }
 
     return std::unexpected(ErrorCode::NotFound);
 };
-
-bool Sphere::isInRange(float x, float min, float max) { return x >= min && x <= max; }
 
 HitDesc Sphere::formHitDesc(const Ray& ray, float tHit) const {
     Point hitPoint = ray.evaluate(tHit);

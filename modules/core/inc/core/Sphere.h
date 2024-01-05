@@ -28,10 +28,9 @@ public:
 
     float radius() const;
 
-    std::expected<HitDesc, Error> hit(const Ray& ray, float t_start, float t_end) const override;
+    std::expected<HitDesc, Error> hit(const Ray& ray, float tMin, float tMax) const override;
 
 private:
-    static bool isInRange(float x, float min, float max);
     HitDesc formHitDesc(const Ray& ray, float tHit) const;
 
 private:
