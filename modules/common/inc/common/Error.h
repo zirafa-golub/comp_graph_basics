@@ -4,7 +4,8 @@
 
 namespace cg {
 enum class ErrorCode : uint8_t {
-    NotFound
+    NotFound,
+    OperationFailed
 };
 
 class Error {
