@@ -15,7 +15,7 @@ public:
     std::vector<Shape*> shapes(std::unique_ptr<Shape>&& shape);
 
     void setCamera(std::unique_ptr<Camera>&& camera);
-    const std::unique_ptr<Camera>& camera() const;
+    const Camera& camera() const;
     cg::Camera& camera();
 
 private:
