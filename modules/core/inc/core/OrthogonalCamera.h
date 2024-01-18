@@ -2,8 +2,6 @@
 
 #include "core/Camera.h"
 
-#include <cassert>
-
 namespace cg {
 class OrthogonalCamera : public Camera {
 public:

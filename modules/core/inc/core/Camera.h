@@ -4,11 +4,6 @@
 #include "core/Movable.h"
 #include "core/Ray.h"
 
-#include <cassert>
-
-#include "glm/geometric.hpp"
-#include "glm/vec2.hpp"
-
 namespace cg {
 class Camera : public Movable {
 public:

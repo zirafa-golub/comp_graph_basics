@@ -32,6 +32,6 @@ HitDesc Sphere::formHitDesc(const Ray& ray, float tHit) const {
     Point hitPoint = ray.evaluate(tHit);
     glm::vec3 unitNormal = (hitPoint - center()) / radius_;
 
-    return HitDesc{this, ray, tHit, std::move(unitNormal)};
+    return HitDesc{this, ray, tHit, unitNormal};
 }
 } // namespace cg

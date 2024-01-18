@@ -5,7 +5,7 @@
 namespace cg {
 class Ray {
 public:
-    Ray(glm::vec3 origin, glm::vec3 direction) : origin_(std::move(origin)), direction_(std::move(direction)) {}
+    Ray(const glm::vec3& origin, const glm::vec3& direction) : origin_(origin), direction_(direction) {}
 
     Point evaluate(float t) const { return origin_ + t * direction_; }
     const Point& origin() const { return origin_; }

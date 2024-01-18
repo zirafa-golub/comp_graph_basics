@@ -1,5 +1,7 @@
 #include "core/OrthogonalCamera.h"
 
+#include <cassert>
+
 namespace cg {
 Ray OrthogonalCamera::castRay(unsigned pixelX, unsigned pixelY) const {
     assert(pixelX < resolution().width);

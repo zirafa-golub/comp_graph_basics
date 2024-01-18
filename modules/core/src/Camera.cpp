@@ -1,5 +1,9 @@
 #include "core/Camera.h"
 
+#include "glm/geometric.hpp"
+
+#include <cassert>
+
 namespace cg {
 Camera::Camera() { update(); }
 
