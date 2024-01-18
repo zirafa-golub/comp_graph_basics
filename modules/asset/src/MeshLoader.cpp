@@ -33,7 +33,9 @@ std::expected<Mesh, Error> MeshLoader::load(std::filesystem::path path) {
         assert(index1.vertex_index >= 0);
         assert(index2.vertex_index >= 0);
 
-        indices.emplace_back(index0.vertex_index, index1.vertex_index, index2.vertex_index);
+        indices.push_back(Mesh::TriangleIndices{static_cast<unsigned>(index0.vertex_index),
+                                                static_cast<unsigned>(index1.vertex_index),
+                                                static_cast<unsigned>(index2.vertex_index)});
     }
 
     return Mesh(std::move(vertices), std::move(indices));

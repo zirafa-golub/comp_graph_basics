@@ -1,6 +1,5 @@
 #include "common/math.h"
 
-#include <cassert>
 #include <cmath>
 
 namespace cg {
@@ -38,4 +37,38 @@ QuadSolve solveQuadEquation(float a, float b, float c) {
 
     return QuadSolve(x1, x2);
 }
+
+namespace detail {
+union FloatIntRep {
+    FloatIntRep(float val) : f(val) {}
+
+    bool isNegative() { return i < 0; }
+
+    float f;
+    int32_t i;
+};
+} // namespace detail
+
+bool areFloatsEqualUlps(float left, float right, int32_t maxUlpDistance) {
+    detail::FloatIntRep repLeft{left};
+    detail::FloatIntRep repRight{right};
+
+    // any comparison with NaN should return false according IEEE standard
+    if (std::isnan(left) || std::isnan(right)) {
+        return false;
+    }
+
+    // +0 and -0 are treated as equal according to IEEE standard
+    if (repLeft.isNegative() != repRight.isNegative()) {
+        if (left == right) {
+            return true;
+        }
+        return false;
+    }
+
+    int32_t ulpDifference = (repLeft.i < repRight.i) ? (repRight.i - repLeft.i) : (repLeft.i - repRight.i);
+    return ulpDifference <= maxUlpDistance;
+}
+
+bool areFloatsEqualTolerance(float left, float right, float tolerance) { return std::fabs(left - right) <= tolerance; }
 } // namespace cg

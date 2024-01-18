@@ -27,4 +27,7 @@ template <typename T>
 bool isInRangeIncl(T value, T min, T max) {
     return value >= min && value <= max;
 }
+
+bool areFloatsEqualUlps(float left, float right, int32_t maxUlpDistance = 4);
+bool areFloatsEqualTolerance(float left, float right, float tolerance = 0.000001f);
 } // namespace cg

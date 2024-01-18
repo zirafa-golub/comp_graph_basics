@@ -12,9 +12,12 @@ source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}/inc" FILES ${core_includes})
 
 add_executable(core_test)
 file(GLOB_RECURSE core_test_sources "test/*.cpp")
+file(GLOB_RECURSE core_test_includes "test/*.h")
 
-target_sources(core_test PRIVATE ${core_test_sources})
+target_sources(core_test PRIVATE ${core_test_sources} ${core_test_includes})
+target_include_directories(core_test PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/test>")
 target_link_libraries(core_test PRIVATE core gtest_main)
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}/test" FILES ${core_test_sources})
+source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}/test" FILES ${core_test_includes})
 
 add_test(NAME core_tests COMMAND core_test)
