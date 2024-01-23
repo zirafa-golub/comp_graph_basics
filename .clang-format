@@ -6,3 +6,4 @@ PointerAlignment: Left
 AllowShortEnumsOnASingleLine: false
 AlwaysBreakTemplateDeclarations: true
 InsertBraces: true
+InsertNewlineAtEOF: true

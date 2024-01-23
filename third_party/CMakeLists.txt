@@ -11,6 +11,7 @@ FetchContent_Declare(
   GIT_REPOSITORY https://github.com/libsdl-org/SDL.git
   GIT_TAG        release-2.28.5
 )
+set(SDL2_DISABLE_SDL2MAIN OFF CACHE BOOL "" FORCE)
 
 FetchContent_Declare(
   googletest
