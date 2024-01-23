@@ -32,7 +32,7 @@ TEST(PerspectiveCameraTest, castRay_evenPixelCount_shouldReturnExpectedRay) {
 
     Ray ray = camera.castRay(10, 12);
 
-    EXPECT_EQ(ray.origin(), Point(1, 2, 3));
+    EXPECT_EQ(ray.origin(), Point(51, -35.5f, -36.5f));
     EXPECT_EQ(ray.direction(), glm::vec3(50, -37.5f, -39.5f));
 }
 
@@ -48,7 +48,7 @@ TEST(PerspectiveCameraTest, castRay_oddPixelCount_shouldReturnExpectedRay) {
 
     Ray ray = camera.castRay(52, 63);
 
-    EXPECT_EQ(ray.origin(), Point(5, 4, 2));
+    EXPECT_EQ(ray.origin(), Point(104, 32, 8));
     EXPECT_EQ(ray.direction(), glm::vec3(99, 28, 6));
 }
 

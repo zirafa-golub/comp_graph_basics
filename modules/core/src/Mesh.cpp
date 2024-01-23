@@ -17,9 +17,9 @@ std::expected<HitDesc, Error> Mesh::hit(const Ray& ray, float tMin, float tMax) 
     glm::vec3 unitNormal;
 
     for (const auto& triangle : triangles_) {
-        const auto& vertexA = vertices_[triangle[0]];
-        const auto& vertexB = vertices_[triangle[1]];
-        const auto& vertexC = vertices_[triangle[2]];
+        const auto& vertexA = vertices_[triangle[0]] + position();
+        const auto& vertexB = vertices_[triangle[1]] + position();
+        const auto& vertexC = vertices_[triangle[2]] + position();
         auto triHitResult = hitTriangle(ray, tMin, tMax, vertexA, vertexB, vertexC);
 
         if (triHitResult.has_value()) {
@@ -36,8 +36,9 @@ std::expected<HitDesc, Error> Mesh::hit(const Ray& ray, float tMin, float tMax) 
     return HitDesc(this, ray, closestHit, unitNormal);
 }
 
-std::expected<Mesh::TriangleHit, Error> Mesh::hitTriangle(const Ray& ray, float tMin, float tMax, const Point& vertexA,
-                                                          const Point& vertexB, const Point& vertexC) {
+std::expected<Mesh::TriangleHit, ErrorCode> Mesh::hitTriangle(const Ray& ray, float tMin, float tMax,
+                                                              const Point& vertexA, const Point& vertexB,
+                                                              const Point& vertexC) {
     /*  a = X_a - X_b   d = X_a - X_c   g = X_d     j = X_a - X_e
      *  b = Y_a - Y_b   e = Y_a - Y_c   h = Y_d     k = Y_a - Y_e
      *  c = Z_a - Z_b   f = Z_a - Z_c   i = Z_d     l = Z_a - Z_e

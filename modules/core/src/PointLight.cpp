@@ -21,7 +21,7 @@ Color PointLight::illuminate(const HitDesc& pointDesc) const {
     Color irradiance = intensity_ * geometricFactor / (lightDistance * lightDistance);
 
     Color reflectedLightFactor =
-        pointDesc.hitShape->material().reflect(pointDesc.unitNormal, -pointDesc.ray.direction(), lightDirection);
+        pointDesc.hitShape->material().reflect(pointDesc.unitNormal, pointDesc.unitViewDirection, lightDirection);
 
     return irradiance * reflectedLightFactor;
 }

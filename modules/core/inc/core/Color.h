@@ -1,31 +1,44 @@
 #pragma once
 
+#include <cstdint>
 #include <type_traits>
 
+#include "glm/ext/vector_common.hpp"
 #include "glm/vec3.hpp"
 
 namespace cg {
 class Color {
 public:
-    Color(float r, float g, float b) : rgb_({r, g, b}) {}
-    Color(const glm::vec3& rgb) : rgb_(rgb) {}
+    template <typename R, typename G, typename B>
+    constexpr Color(R r, G g, B b) : rgb_({r, g, b}) {}
+    constexpr explicit Color(const glm::vec3& rgb) : rgb_(rgb) {}
 
-    float r() const { return rgb_[0]; }
-    float g() const { return rgb_[1]; }
-    float b() const { return rgb_[2]; }
+    constexpr float r() const { return rgb_[0]; }
+    constexpr float g() const { return rgb_[1]; }
+    constexpr float b() const { return rgb_[2]; }
 
-    glm::vec3& data() { return rgb_; }
-    const glm::vec3& data() const { return rgb_; }
+    constexpr glm::vec3& data() { return rgb_; }
+    constexpr const glm::vec3& data() const { return rgb_; }
 
-    bool operator==(const Color& other) const { return rgb_ == other.rgb_; }
-    bool operator!=(const Color& other) const { return !(*this == other); }
+    constexpr Color clamp() const { return Color(glm::clamp(rgb_, 0.0f, 1.0f)); }
 
-    Color operator+(const Color& other) { return rgb_ + other.rgb_; }
-    Color operator-(const Color& other) { return rgb_ - other.rgb_; }
-    Color operator*(const Color& other) { return rgb_ * other.rgb_; }
-    Color operator*(float scalar) const { return scalar * rgb_; }
-    friend Color operator*(float scalar, const Color& color) { return color * scalar; }
-    Color operator/(float scalar) const { return rgb_ / scalar; }
+    constexpr bool operator==(const Color& other) const { return rgb_ == other.rgb_; }
+    constexpr bool operator!=(const Color& other) const { return !(*this == other); }
+
+    constexpr Color operator+(const Color& other) { return Color(rgb_ + other.rgb_); }
+    constexpr Color& operator+=(const Color& other) {
+        rgb_ += other.rgb_;
+        return *this;
+    }
+    constexpr Color operator-(const Color& other) { return Color(rgb_ - other.rgb_); }
+    constexpr Color& operator-=(const Color& other) {
+        rgb_ -= other.rgb_;
+        return *this;
+    }
+    constexpr Color operator*(const Color& other) { return Color(rgb_ * other.rgb_); }
+    constexpr Color operator*(float scalar) const { return Color(scalar * rgb_); }
+    constexpr friend Color operator*(float scalar, const Color& color) { return color * scalar; }
+    constexpr Color operator/(float scalar) const { return Color(rgb_ / scalar); }
 
 private:
     glm::vec3 rgb_;

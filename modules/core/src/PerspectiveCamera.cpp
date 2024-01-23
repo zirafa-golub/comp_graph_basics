@@ -31,6 +31,8 @@ Ray PerspectiveCamera::castRay(unsigned pixelX, unsigned pixelY) const {
     float offsetHor = left + (pixelX + 0.5f) * pixelSize().width;
     float offsetVer = bottom + (pixelY + 0.5f) * pixelSize().height;
 
-    return Ray(position(), viewDirection() * viewPlaneDistance_ + offsetHor * rightVector() + offsetVer * upVector());
+    glm::vec3 direction = viewDirection() * viewPlaneDistance_ + offsetHor * rightVector() + offsetVer * upVector();
+
+    return Ray(position() + direction, direction);
 }
 } // namespace cg

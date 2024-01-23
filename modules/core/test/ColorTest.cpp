@@ -24,7 +24,14 @@ TEST(ColorTest, vecConstructor_componentShouldMatch) {
     EXPECT_FLOAT_EQ(test_color.b(), b);
 }
 
-TEST(ColorTest, opEqual_equalColors_shouldReturnExpected) {
+TEST(ColorTest, clamp_shouldReturnExpected) {
+    Color color(1.5f, 0.5f, -1);
+    Color clampedColor = color.clamp();
+
+    assertColorsFloatEqual(clampedColor, Color(1, 0.5f, 0));
+}
+
+TEST(ColorTest, opCompare_equalColors_shouldReturnExpected) {
     constexpr float r = 0.5f, g = 0.3f, b = 0.1f;
     Color color1{r, g, b};
     Color color2{r, g, b};
@@ -33,7 +40,7 @@ TEST(ColorTest, opEqual_equalColors_shouldReturnExpected) {
     EXPECT_FALSE(color1 != color2);
 }
 
-TEST(ColorTest, opEqual_differentColors_shouldReturnFalse) {
+TEST(ColorTest, opCompare_differentColors_shouldReturnFalse) {
     Color color1{0.5f, 0.3f, 0.1f};
     Color color2{0.5f, 0.3f, 0.2f};
 
@@ -48,14 +55,30 @@ TEST(ColorTest, opAdd_withColor_shouldReturnExpected) {
     assertColorsFloatEqual(color1 + color2, Color(0.4f, 0.9f, 0.7f));
 }
 
+TEST(ColorTest, opAddEqual_withColor_shouldReturnExpected) {
+    Color color1{glm::vec3{0.3f, 0.4f, 0.5f}};
+    Color color2{glm::vec3{0.1f, 0.5f, 0.2f}};
+    color1 += color2;
+
+    assertColorsFloatEqual(color1, Color(0.4f, 0.9f, 0.7f));
+}
+
 TEST(ColorTest, opSubtract_withColor_shouldReturnExpected) {
     Color color1{glm::vec3{0.3f, 0.5f, 0.5f}};
     Color color2{glm::vec3{0.1f, 0.4f, 0.2f}};
 
     Color c = color1 - color2;
-    float f = 0.2f;
 
     assertColorsFloatEqual(color1 - color2, Color(0.2f, 0.1f, 0.3f));
+}
+
+TEST(ColorTest, opSubtractEqual_withColor_shouldReturnExpected) {
+    Color color1{glm::vec3{0.3f, 0.5f, 0.5f}};
+    Color color2{glm::vec3{0.1f, 0.4f, 0.2f}};
+
+    color1 -= color2;
+
+    assertColorsFloatEqual(color1, Color(0.2f, 0.1f, 0.3f));
 }
 
 TEST(ColorTest, opMultiply_withColor_shouldReturnExpected) {

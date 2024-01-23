@@ -6,6 +6,8 @@
 #include "core/Movable.h"
 #include "core/Ray.h"
 
+#include "glm/geometric.hpp"
+
 #include <expected>
 #include <memory>
 
@@ -17,6 +19,11 @@ struct HitDesc {
     Ray ray;
     float tHit;
     glm::vec3 unitNormal;
+    glm::vec3 unitViewDirection;
+
+    HitDesc(const Shape* hitShape_, const Ray& ray_, float tHit_, const glm::vec3& unitNormal_)
+        : hitShape(hitShape_), ray(ray_), tHit(tHit_), unitNormal(unitNormal_),
+          unitViewDirection(glm::normalize(-ray.direction())) {}
 };
 
 class Shape : public Movable {

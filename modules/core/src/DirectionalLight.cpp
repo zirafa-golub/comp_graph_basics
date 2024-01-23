@@ -4,7 +4,7 @@
 
 namespace cg {
 DirectionalLight::DirectionalLight(const glm::vec3& direction, const Color& intensity)
-    : direction_(direction), intensity_(intensity) {}
+    : direction_(glm::normalize(direction)), intensity_(intensity) {}
 
 const Color& DirectionalLight::intensity() const { return intensity_; }
 void DirectionalLight::setIntensity(const Color& intensity) { intensity_ = intensity; }
@@ -15,7 +15,7 @@ Color DirectionalLight::illuminate(const HitDesc& pointDesc) const {
     float geometricFactor = std::max(0.0f, glm::dot(pointDesc.unitNormal, -direction_));
     Color irradiance = intensity_ * geometricFactor;
     Color reflectedLightFactor =
-        pointDesc.hitShape->material().reflect(pointDesc.unitNormal, -pointDesc.ray.direction(), -direction_);
+        pointDesc.hitShape->material().reflect(pointDesc.unitNormal, pointDesc.unitViewDirection, -direction_);
 
     return irradiance * reflectedLightFactor;
 }

@@ -22,8 +22,9 @@ public:
     const std::vector<TriangleIndices>& triangles() const;
 
     std::expected<HitDesc, Error> hit(const Ray& ray, float tMin, float tMax) const override;
-    static std::expected<TriangleHit, Error> hitTriangle(const Ray& ray, float tMin, float tMax, const Point& vertexA,
-                                                         const Point& vertexB, const Point& vertexC);
+    static std::expected<TriangleHit, ErrorCode> hitTriangle(const Ray& ray, float tMin, float tMax,
+                                                             const Point& vertexA, const Point& vertexB,
+                                                             const Point& vertexC);
 
 private:
     std::vector<Point> vertices_;
