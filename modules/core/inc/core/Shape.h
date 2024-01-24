@@ -2,6 +2,7 @@
 
 #include "common/Error.h"
 #include "core/BasicTypes.h"
+#include "core/Color.h"
 #include "core/Material.h"
 #include "core/Movable.h"
 #include "core/Ray.h"
@@ -34,7 +35,11 @@ public:
     Material& material() { return *material_; }
     void setMaterial(std::unique_ptr<Material> material) { material_ = std::move(material); }
 
+    const Color& ambientReflectance() const { return ambientReflectance_; }
+    void setAmbientReflectance(const Color& newReflectance) { ambientReflectance_ = newReflectance; }
+
 private:
     std::unique_ptr<Material> material_;
+    Color ambientReflectance_ = Color(1, 1, 1);
 };
 } // namespace cg

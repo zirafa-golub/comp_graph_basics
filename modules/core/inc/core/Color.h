@@ -9,6 +9,7 @@
 namespace cg {
 class Color {
 public:
+    constexpr Color() : rgb_(0, 0, 0) {}
     template <typename R, typename G, typename B>
     constexpr Color(R r, G g, B b) : rgb_({r, g, b}) {}
     constexpr explicit Color(const glm::vec3& rgb) : rgb_(rgb) {}
@@ -25,17 +26,17 @@ public:
     constexpr bool operator==(const Color& other) const { return rgb_ == other.rgb_; }
     constexpr bool operator!=(const Color& other) const { return !(*this == other); }
 
-    constexpr Color operator+(const Color& other) { return Color(rgb_ + other.rgb_); }
+    constexpr Color operator+(const Color& other) const { return Color(rgb_ + other.rgb_); }
     constexpr Color& operator+=(const Color& other) {
         rgb_ += other.rgb_;
         return *this;
     }
-    constexpr Color operator-(const Color& other) { return Color(rgb_ - other.rgb_); }
+    constexpr Color operator-(const Color& other) const { return Color(rgb_ - other.rgb_); }
     constexpr Color& operator-=(const Color& other) {
         rgb_ -= other.rgb_;
         return *this;
     }
-    constexpr Color operator*(const Color& other) { return Color(rgb_ * other.rgb_); }
+    constexpr Color operator*(const Color& other) const { return Color(rgb_ * other.rgb_); }
     constexpr Color operator*(float scalar) const { return Color(scalar * rgb_); }
     constexpr friend Color operator*(float scalar, const Color& color) { return color * scalar; }
     constexpr Color operator/(float scalar) const { return Color(rgb_ / scalar); }

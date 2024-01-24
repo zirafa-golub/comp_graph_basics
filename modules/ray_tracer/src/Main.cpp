@@ -1,5 +1,6 @@
 #include "common/Average.h"
 #include "common/TimeProfiler.h"
+#include "core/AmbientLight.h"
 #include "core/BlinnPhong.h"
 #include "core/DirectionalLight.h"
 #include "core/Mesh.h"
@@ -18,6 +19,7 @@
 #include <memory>
 
 using namespace cg;
+using namespace cg::angle_literals;
 
 constexpr int screenWidth = 1200;
 constexpr int screenHeight = 800;
@@ -40,27 +42,36 @@ int main(int argc, char* argv[]) {
 
     SdlScreen screen = std::move(result.value());
 
-    // prepare scene
+    // Prepare scene
     Scene scene;
+
     std::unique_ptr<PerspectiveCamera> camera = std::make_unique<PerspectiveCamera>();
     camera->setResolution(Camera::Resolution(screenWidth, screenHeight));
     camera->setPosition(Point(0, 0, 0));
     camera->setViewDirection(glm::vec3(1, 0, 0), glm::vec3(0, 1, 0));
     camera->setViewPlaneDistance(0.5f);
     camera->setViewPlaneSize(Size2d(screenWidth, screenHeight));
-    camera->setFieldOfView(Angle::deg(160));
+    camera->setFieldOfView(80_deg);
     camera->update();
+
+    constexpr Color ambientColor = Color(1, 1, 1);
+    constexpr float ambientIntensity = 0.1f;
+    std::unique_ptr<AmbientLight> ambientLight = std::make_unique<AmbientLight>(ambientIntensity * ambientColor);
 
     constexpr Color pointLightColor(1, 1, 1);
     constexpr float pointLightIntensity = 200;
     std::unique_ptr<PointLight> pointLight = std::make_unique<PointLight>(pointLightIntensity * pointLightColor);
     pointLight->setPosition(Point(-4, 8, 3));
 
-    std::unique_ptr<Sphere> sphere = std::make_unique<Sphere>(3.0f);
-    sphere->setPosition(Point(4, 0, 0));
+    std::unique_ptr<Sphere> sphere1 = std::make_unique<Sphere>(2.0f);
+    sphere1->setPosition(Point(10, 0, -3));
+    sphere1->setAmbientReflectance(Color(1, 0, 0));
+    sphere1->setMaterial(std::make_unique<BlinnPhong>(Color(1, 0, 0), Color(0.4, 0.4, 0.4), 32));
 
-    std::unique_ptr<Material> sphereMaterial = std::make_unique<BlinnPhong>(Color(0, 1, 0), Color(0.4, 0.4, 0.4), 32);
-    sphere->setMaterial(std::move(sphereMaterial));
+    std::unique_ptr<Sphere> sphere2 = std::make_unique<Sphere>(1.0f);
+    sphere2->setPosition(Point(8, 1, 1));
+    sphere2->setAmbientReflectance(Color(0, 1, 0));
+    sphere2->setMaterial(std::make_unique<BlinnPhong>(Color(0, 1, 0), Color(0.4, 0.4, 0.4), 32));
 
     constexpr float floorWidth = 1000;
     constexpr float floorLength = 100;
@@ -72,15 +83,16 @@ int main(int argc, char* argv[]) {
     std::vector<Mesh::TriangleIndices> floorTriangles = {{0, 3, 2}, {0, 2, 1}};
     std::unique_ptr<Mesh> floor = std::make_unique<Mesh>(std::move(floorVertices), std::move(floorTriangles));
     floor->setPosition(Point(0, floorHeight, 0));
+    floor->setMaterial(std::make_unique<BlinnPhong>(Color(0.5, 0.5, 0.5), Color(0, 0, 0), 1));
 
-    std::unique_ptr<Material> floorMaterial = std::make_unique<BlinnPhong>(Color(0.5f, 0.5f, 0.5f), Color(0, 0, 0), 1);
-    floor->setMaterial(std::move(floorMaterial));
-
-    scene.addShape(std::move(sphere));
+    scene.addShape(std::move(sphere1));
+    scene.addShape(std::move(sphere2));
     scene.addShape(std::move(floor));
     scene.addLight(std::move(pointLight));
+    scene.addLight(std::move(ambientLight));
     scene.setCamera(std::move(camera));
 
+    // Prepare render loop
     RayTraceRenderer renderer;
 
     float timeElapsed = 0;
@@ -91,6 +103,7 @@ int main(int argc, char* argv[]) {
     SDL_Event event;
     bool done = false;
 
+    // Render loop
     while (!done) {
         while (SDL_PollEvent(&event)) {
             switch (event.type) {
