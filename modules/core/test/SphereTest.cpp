@@ -26,7 +26,7 @@ TEST(SphereTest, hit_twoHits_shouldReturnExpected) {
     auto& hit = result.value();
     EXPECT_EQ(hit.hitShape, &sphere);
     EXPECT_EQ(hit.ray, ray);
-    EXPECT_EQ(hit.tHit, 2);
+    EXPECT_FLOAT_EQ(hit.tHit, 2);
     EXPECT_EQ(hit.unitNormal, glm::vec3(-1, 0, 0));
 }
 

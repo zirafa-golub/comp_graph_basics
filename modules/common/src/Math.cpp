@@ -26,14 +26,14 @@ QuadSolve solveQuadEquation(float a, float b, float c) {
 
     // two solutions
     float x1, x2;
-    float solution_component;
+    float solutionComponent;
     if (b > 0) {
-        solution_component = -b - sqrtf(discriminant);
+        solutionComponent = -b - sqrtf(discriminant);
     } else {
-        solution_component = -b + sqrtf(discriminant);
+        solutionComponent = -b + sqrtf(discriminant);
     }
-    x1 = (2 * c) / solution_component;
-    x2 = solution_component / (2 * a);
+    x1 = (2 * c) / solutionComponent;
+    x2 = solutionComponent / (2 * a);
 
     return QuadSolve(x1, x2);
 }

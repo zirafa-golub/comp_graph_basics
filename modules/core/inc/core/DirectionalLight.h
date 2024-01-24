@@ -6,7 +6,7 @@
 namespace cg {
 class DirectionalLight : public Light {
 public:
-    DirectionalLight(const glm::vec3& direction = {0, -1, 0}, const Color& color = Color(1, 1, 1));
+    DirectionalLight(const glm::vec3& direction = {0, -1, 0}, const Color& intensity = Color(1, 1, 1));
 
     const Color& intensity() const;
     void setIntensity(const Color& intensity);
