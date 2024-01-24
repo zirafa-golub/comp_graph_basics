@@ -1,14 +1,16 @@
 #include "gtest/gtest.h"
 
 #include "core/DirectionalLight.h"
-
 #include "core/Material.h"
 #include "core/Shape.h"
+
+#include "glm/vec3.hpp"
 
 #include "TestUtils.h"
 
 #include <cmath>
 #include <expected>
+#include <limits>
 
 using namespace cg;
 
@@ -36,4 +38,13 @@ TEST(DirectionalLightTest, illuminate_invalidLightAngle_shouldReturnZero) {
 
     Color reflectedLight = light.illuminate(hit);
     assertColorsFloatEqual(reflectedLight, Color(0.0f, 0.0f, 0.0f));
+}
+
+TEST(DirectionalLightTest, distanceFrom_shouldReturnExpected) {
+    glm::vec3 direction(1, 2, 3);
+    DirectionalLight light(direction);
+
+    auto distanceDesc = light.distanceFrom(Point(-3, -2, -1));
+    EXPECT_EQ(distanceDesc.distance, std::numeric_limits<float>::infinity());
+    areVectorsParallel(distanceDesc.direction, -direction);
 }

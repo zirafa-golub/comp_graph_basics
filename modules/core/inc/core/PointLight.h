@@ -12,6 +12,7 @@ public:
     void setIntensity(const Color& intensity);
 
     Color illuminate(const HitDesc& pointDesc) const override;
+    DistanceDesc distanceFrom(const Point& point) const override;
 
 private:
     Color intensity_;

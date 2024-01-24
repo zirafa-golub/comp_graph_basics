@@ -25,4 +25,10 @@ Color PointLight::illuminate(const HitDesc& pointDesc) const {
 
     return irradiance * reflectedLightFactor;
 }
+
+Light::DistanceDesc PointLight::distanceFrom(const Point& point) const {
+    glm::vec3 distanceVec = position() - point;
+    float distance = glm::length(distanceVec);
+    return DistanceDesc(distance, distanceVec);
+}
 } // namespace cg

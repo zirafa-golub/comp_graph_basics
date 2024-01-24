@@ -14,6 +14,7 @@ public:
     void setDirection(const glm::vec3& direction);
 
     Color illuminate(const HitDesc& pointDesc) const override;
+    DistanceDesc distanceFrom(const Point& point) const override;
 
 private:
     glm::vec3 direction_;

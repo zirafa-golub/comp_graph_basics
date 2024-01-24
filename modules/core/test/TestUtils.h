@@ -3,6 +3,8 @@
 #include "core/Material.h"
 #include "core/Shape.h"
 
+#include "glm/vec3.hpp"
+
 #include <expected>
 
 namespace cg {
@@ -10,6 +12,8 @@ class Color;
 }
 
 void assertColorsFloatEqual(const cg::Color& left, const cg::Color& right);
+void assertVec3FloatEqual(const glm::vec3& left, const glm::vec3& right);
+void areVectorsParallel(const glm::vec3& left, const glm::vec3& right);
 
 class UnhittableShape : public cg::Shape {
 public:

@@ -2,6 +2,8 @@
 
 #include "glm/geometric.hpp"
 
+#include <limits>
+
 namespace cg {
 DirectionalLight::DirectionalLight(const glm::vec3& direction, const Color& intensity)
     : direction_(glm::normalize(direction)), intensity_(intensity) {}
@@ -18,5 +20,9 @@ Color DirectionalLight::illuminate(const HitDesc& pointDesc) const {
         pointDesc.hitShape->material().reflect(pointDesc.unitNormal, pointDesc.unitViewDirection, -direction_);
 
     return irradiance * reflectedLightFactor;
+}
+
+Light::DistanceDesc DirectionalLight::distanceFrom(const Point& point) const {
+    return DistanceDesc(std::numeric_limits<float>::infinity(), -direction_);
 }
 } // namespace cg

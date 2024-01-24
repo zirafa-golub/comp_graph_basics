@@ -15,3 +15,10 @@ TEST(AmbientLightTest, illuminate_shouldReturnExpected) {
 
     assertColorsFloatEqual(reflectedLight, Color(0.2f, 0.1f, 0.42f));
 }
+
+TEST(AmbientLightTest, distanceFrom_shouldReturnExpected) {
+    AmbientLight light(Color(1, 1, 1));
+
+    auto distanceDesc = light.distanceFrom(Point(-3, -2, -1));
+    EXPECT_EQ(distanceDesc.distance, 0.0f);
+}
