@@ -29,5 +29,5 @@ bool isInRangeIncl(T value, T min, T max) {
 }
 
 bool areFloatsEqualUlps(float left, float right, int32_t maxUlpDistance = 4);
-bool areFloatsEqualTolerance(float left, float right, float tolerance = 0.000001f);
+bool areFloatsEqualTolerance(float left, float right, float tolerance = 0.00001f);
 } // namespace cg

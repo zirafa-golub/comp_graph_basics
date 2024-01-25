@@ -41,6 +41,8 @@ public:
     constexpr friend Color operator*(float scalar, const Color& color) { return color * scalar; }
     constexpr Color operator/(float scalar) const { return Color(rgb_ / scalar); }
 
+    static constexpr Color black() { return Color(0, 0, 0); }
+
 private:
     glm::vec3 rgb_;
 };

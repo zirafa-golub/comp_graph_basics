@@ -54,28 +54,27 @@ int main(int argc, char* argv[]) {
     camera->setFieldOfView(80_deg);
     camera->update();
 
-    constexpr Color ambientColor = Color(1, 1, 1);
-    constexpr float ambientIntensity = 0.1f;
-    std::unique_ptr<AmbientLight> ambientLight = std::make_unique<AmbientLight>(ambientIntensity * ambientColor);
+    std::unique_ptr<AmbientLight> ambientLight = std::make_unique<AmbientLight>(0.1f * Color(0.1f, 0.1f, 0.1f));
 
-    constexpr Color pointLightColor(1, 1, 1);
-    constexpr float pointLightIntensity = 200;
-    std::unique_ptr<PointLight> pointLight = std::make_unique<PointLight>(pointLightIntensity * pointLightColor);
-    pointLight->setPosition(Point(-4, 8, 3));
+    std::unique_ptr<PointLight> pointLight1 = std::make_unique<PointLight>(250 * Color(1, 1, 1));
+    pointLight1->setPosition(Point(-3, 6, 6));
+
+    std::unique_ptr<PointLight> pointLight2 = std::make_unique<PointLight>(100 * Color(1, 1, 1));
+    pointLight2->setPosition(Point(-4, 4, -8));
 
     std::unique_ptr<Sphere> sphere1 = std::make_unique<Sphere>(2.0f);
     sphere1->setPosition(Point(10, 0, -3));
     sphere1->setAmbientReflectance(Color(1, 0, 0));
-    sphere1->setMaterial(std::make_unique<BlinnPhong>(Color(1, 0, 0), Color(0.4, 0.4, 0.4), 32));
+    sphere1->setMaterial(std::make_unique<BlinnPhong>(Color(1, 0, 0), Color(0.4, 0.4, 0.4), 32, Color(0.3, 0.3, 0.3)));
 
     std::unique_ptr<Sphere> sphere2 = std::make_unique<Sphere>(1.0f);
-    sphere2->setPosition(Point(8, 1, 1));
+    sphere2->setPosition(Point(6, 1.7f, 0.5f));
     sphere2->setAmbientReflectance(Color(0, 1, 0));
-    sphere2->setMaterial(std::make_unique<BlinnPhong>(Color(0, 1, 0), Color(0.4, 0.4, 0.4), 32));
+    sphere2->setMaterial(std::make_unique<BlinnPhong>(Color(0, 1, 0), Color(0.4, 0.4, 0.4), 32, Color(0.3, 0.3, 0.3)));
 
     constexpr float floorWidth = 1000;
     constexpr float floorLength = 100;
-    constexpr float floorHeight = -4;
+    constexpr float floorHeight = -2.0f;
     std::vector<Point> floorVertices = {{floorLength / 2, 0, -floorWidth / 2},
                                         {floorLength / 2, 0, floorWidth / 2},
                                         {-floorLength / 2, 0, floorWidth / 2},
@@ -83,12 +82,13 @@ int main(int argc, char* argv[]) {
     std::vector<Mesh::TriangleIndices> floorTriangles = {{0, 3, 2}, {0, 2, 1}};
     std::unique_ptr<Mesh> floor = std::make_unique<Mesh>(std::move(floorVertices), std::move(floorTriangles));
     floor->setPosition(Point(0, floorHeight, 0));
-    floor->setMaterial(std::make_unique<BlinnPhong>(Color(0.5, 0.5, 0.5), Color(0, 0, 0), 1));
+    floor->setMaterial(std::make_unique<BlinnPhong>(Color(0.5, 0.5, 0.5), Color(0, 0, 0), 1, Color(0.3, 0.3, 0.3)));
 
     scene.addShape(std::move(sphere1));
     scene.addShape(std::move(sphere2));
     scene.addShape(std::move(floor));
-    scene.addLight(std::move(pointLight));
+    scene.addLight(std::move(pointLight1));
+    scene.addLight(std::move(pointLight2));
     scene.addLight(std::move(ambientLight));
     scene.setCamera(std::move(camera));
 
@@ -97,7 +97,7 @@ int main(int argc, char* argv[]) {
 
     float timeElapsed = 0;
     float fps = 0;
-    auto averageCalc = averageOf(20);
+    auto averageCalc = averageOf(5);
     TimeProfiler profiler;
 
     SDL_Event event;

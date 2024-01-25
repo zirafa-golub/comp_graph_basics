@@ -8,5 +8,6 @@ struct Material {
 
     virtual Color reflect(const glm::vec3& normal, const glm::vec3& viewerDirection,
                           const glm::vec3& lightDirection) const = 0;
+    virtual Color surfaceReflectance() const = 0;
 };
 } // namespace cg

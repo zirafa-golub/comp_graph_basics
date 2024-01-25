@@ -33,7 +33,6 @@ public:
 private:
     HitDesc formHitDesc(const Ray& ray, float tHit) const;
 
-private:
     float radius_;
 };
 } // namespace cg

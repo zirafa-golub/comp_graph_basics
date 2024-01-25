@@ -9,12 +9,12 @@
 
 namespace cg {
 
-BlinnPhong::BlinnPhong() : BlinnPhong(Color(0, 0, 0), Color(0, 0, 0), 1) {}
+BlinnPhong::BlinnPhong() : BlinnPhong(Color::black(), Color::black(), 1) {}
 
 BlinnPhong::BlinnPhong(const Color& diffuseReflectance, const Color& specularReflectance,
-                       unsigned specularFallOffExponent = 1)
+                       unsigned specularFallOffExponent, const Color& surfaceReflectance)
     : diffuseReflectance_(diffuseReflectance), specularCoefficient_(specularReflectance),
-      specularFallOffExponent_(specularFallOffExponent) {
+      specularFallOffExponent_(specularFallOffExponent), surfaceReflectance_(surfaceReflectance) {
     assert(specularFallOffExponent_ >= 1 && "Specular fall off exponent must be at least 1.");
 }
 
@@ -34,6 +34,8 @@ Color BlinnPhong::reflect(const glm::vec3& normal, const glm::vec3& viewerDirect
     return diffuse + specular;
 }
 
+Color BlinnPhong::surfaceReflectance() const { return surfaceReflectance_; }
+void BlinnPhong::surfaceReflectance(const Color& newReflectance) { surfaceReflectance_ = newReflectance; }
 Color BlinnPhong::diffuseReflectance() { return diffuseReflectance_; };
 void BlinnPhong::setDiffuseReflectance(const Color& newDiffuse) { diffuseReflectance_ = newDiffuse; }
 Color BlinnPhong::specularCoefficient() { return specularCoefficient_; }
