@@ -70,14 +70,14 @@ TEST(MathTest, solveQuadEquation_aBndCAreZero_shouldReturnExpected) {
     EXPECT_EQ(solutions.solutions[0], 0);
 }
 
-TEST(MathTest, areFloatsAlmostEqual_equalFloats_shouldReturnTrue) {
+TEST(MathTest, areFloatsEqualUlps_equalFloats_shouldReturnTrue) {
     float a = 1234.0f;
     float b = a;
 
     EXPECT_TRUE(areFloatsEqualUlps(a, b));
 }
 
-TEST(MathTest, areFloatsAlmostEqual_positiveClose_shouldReturnTrue) {
+TEST(MathTest, areFloatsEqualUlps_positiveClose_shouldReturnTrue) {
     union {
         float f;
         int32_t i;
@@ -90,9 +90,10 @@ TEST(MathTest, areFloatsAlmostEqual_positiveClose_shouldReturnTrue) {
     float b = intRep.f;
 
     EXPECT_TRUE(areFloatsEqualUlps(a, b));
+    EXPECT_TRUE(areFloatsEqualUlps(b, a));
 }
 
-TEST(MathTest, areFloatsAlmostEqual_negativeClose_shouldReturnTrue) {
+TEST(MathTest, areFloatsEqualUlps_negativeClose_shouldReturnTrue) {
     union {
         float f;
         int32_t i;
@@ -105,38 +106,25 @@ TEST(MathTest, areFloatsAlmostEqual_negativeClose_shouldReturnTrue) {
     float b = intRep.f;
 
     EXPECT_TRUE(areFloatsEqualUlps(a, b));
+    EXPECT_TRUE(areFloatsEqualUlps(b, a));
 }
 
-TEST(MathTest, areFloatsAlmostEqual_comparisonOfNaNs_shouldReturnFalse) {
+TEST(MathTest, areFloatsEqualUlps_comparisonOfNaNs_shouldReturnFalse) {
     float a = std::numeric_limits<float>::quiet_NaN();
     float b = a;
 
     EXPECT_FALSE(areFloatsEqualUlps(a, b));
 }
 
-TEST(MathTest, areFloatsAlmostEqual_comparisonOfDifferentZeroes_shouldReturnFalse) {
+TEST(MathTest, areFloatsEqualUlps_comparisonOfDifferentZeroes_shouldReturnTrue) {
     float a = +0.0f;
     float b = -0.0f;
 
     EXPECT_TRUE(areFloatsEqualUlps(a, b));
+    EXPECT_TRUE(areFloatsEqualUlps(b, a));
 }
 
-TEST(MathTest, areFloatsAlmostEqual_positiveCloseSPecifiedDifference_shouldReturnTrue) {
-    union {
-        float f;
-        int32_t i;
-    } intRep;
-
-    intRep.f = 1234.0f;
-
-    float a = intRep.f;
-    intRep.i += 6;
-    float b = intRep.f;
-
-    EXPECT_TRUE(areFloatsEqualUlps(a, b, 6));
-}
-
-TEST(MathTest, areFloatsAlmostEqual_positiveDifferent_shouldReturnFalse) {
+TEST(MathTest, areFloatsEqualUlps_positiveDifferent_shouldReturnFalse) {
     union {
         float f;
         int32_t i;
@@ -149,19 +137,86 @@ TEST(MathTest, areFloatsAlmostEqual_positiveDifferent_shouldReturnFalse) {
     float b = intRep.f;
 
     EXPECT_FALSE(areFloatsEqualUlps(a, b));
+    EXPECT_FALSE(areFloatsEqualUlps(b, a));
 }
 
-TEST(MathTest, areFloatsAlmostEqual_negativeDifferent_shouldReturnFalse) {
+TEST(MathTest, areFloatsEqualUlps_negativeDifferent_shouldReturnFalse) {
     union {
         float f;
         int32_t i;
     } intRep;
 
-    intRep.f = 1234.0f;
+    intRep.f = -1234.0f;
 
     float a = intRep.f;
-    intRep.i -= 6;
+    intRep.i += 6;
     float b = intRep.f;
 
     EXPECT_FALSE(areFloatsEqualUlps(a, b));
+    EXPECT_FALSE(areFloatsEqualUlps(b, a));
 }
+
+TEST(MathTest, areFloatsEqualTolerance_equalFloats_shouldReturnTrue) {
+    float a = 1234.0f;
+    float b = a;
+
+    EXPECT_TRUE(areFloatsEqualTolerance(a, b));
+}
+
+TEST(MathTest, areFloatsEqualTolerance_positiveClose_shouldReturnTrue) {
+    float a = 0.12345f;
+    float b = 0.123455f;
+
+    EXPECT_TRUE(areFloatsEqualTolerance(a, b));
+    EXPECT_TRUE(areFloatsEqualTolerance(b, a));
+}
+
+TEST(MathTest, areFloatsEqualTolerance_negativeClose_shouldReturnTrue) {
+    float a = -0.12345f;
+    float b = -0.123455f;
+
+    EXPECT_TRUE(areFloatsEqualTolerance(a, b));
+    EXPECT_TRUE(areFloatsEqualTolerance(b, a));
+}
+
+TEST(MathTest, areFloatsEqualTolerance_comparisonOfNaNs_shouldReturnFalse) {
+    float a = std::numeric_limits<float>::quiet_NaN();
+    float b = a;
+
+    EXPECT_FALSE(areFloatsEqualTolerance(a, b));
+}
+
+TEST(MathTest, areFloatsEqualTolerance_comparisonOfDifferentZeroes_shouldReturnTrue) {
+    float a = +0.0f;
+    float b = -0.0f;
+
+    EXPECT_TRUE(areFloatsEqualTolerance(a, b));
+    EXPECT_TRUE(areFloatsEqualTolerance(b, a));
+}
+
+TEST(MathTest, areFloatsEqualTolerance_positiveDifferent_shouldReturnFalse) {
+    float a = 0.1234f;
+    float b = 0.123411f;
+
+    EXPECT_FALSE(areFloatsEqualTolerance(a, b));
+    EXPECT_FALSE(areFloatsEqualTolerance(b, a));
+}
+
+TEST(MathTest, areFloatsEqualTolerance_negativeDifferent_shouldReturnFalse) {
+    float a = -0.1234f;
+    float b = -0.123411f;
+
+    EXPECT_FALSE(areFloatsEqualTolerance(a, b));
+    EXPECT_FALSE(areFloatsEqualTolerance(b, a));
+}
+
+TEST(MathTest, isPowerOf2_powerOf2_shouldReturnTrue) { EXPECT_TRUE(isPowerOf2(64)); }
+TEST(MathTest, isPowerOf2_one_shouldReturnTrue) { EXPECT_TRUE(isPowerOf2(1)); }
+TEST(MathTest, isPowerOf2_notPowerOf2_shouldReturnFalse) { EXPECT_FALSE(isPowerOf2(5)); }
+
+TEST(MathTest, pow2_one_shouldReturnVal) { EXPECT_EQ(pow2(10, 1), 10); }
+TEST(MathTest, pow2_powerOf2Exp_shouldReturnVal) { EXPECT_EQ(pow2(10, 4), 10'000); }
+#ifndef NDEBUG
+TEST(MathTest, pow2_notPowerOf2Exp_shouldTriggerAssert) { ASSERT_DEATH(pow2(10, 5), ".*"); }
+TEST(MathTest, pow2_zero_shouldTriggerAssert) { ASSERT_DEATH(pow2(10, 0), ".*"); }
+#endif
