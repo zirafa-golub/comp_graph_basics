@@ -1,7 +1,10 @@
 #pragma once
 
 #include <array>
+#include <cassert>
+#include <cmath>
 #include <compare>
+#include <type_traits>
 
 namespace cg {
 struct QuadSolve {
@@ -30,4 +33,23 @@ bool isInRangeIncl(T value, T min, T max) {
 
 bool areFloatsEqualUlps(float left, float right, int32_t maxUlpDistance = 4);
 bool areFloatsEqualTolerance(float left, float right, float tolerance = 0.00001f);
+
+constexpr bool isPowerOf2(unsigned val) {
+    while (val % 2 != 1) {
+        val /= 2;
+    }
+    return val == 1;
+}
+
+template <typename T>
+constexpr T pow2(T val, unsigned pow2exp)
+    requires std::is_arithmetic_v<T>
+{
+    assert(isPowerOf2(exp) && pow2exp > 0);
+    while (pow2exp > 1) {
+        val *= val;
+        pow2exp >>= 1;
+    }
+    return val;
+}
 } // namespace cg

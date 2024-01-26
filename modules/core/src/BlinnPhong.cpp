@@ -16,6 +16,7 @@ BlinnPhong::BlinnPhong(const Color& diffuseReflectance, const Color& specularRef
     : diffuseReflectance_(diffuseReflectance), specularCoefficient_(specularReflectance),
       specularFallOffExponent_(specularFallOffExponent), surfaceReflectance_(surfaceReflectance) {
     assert(specularFallOffExponent_ >= 1 && "Specular fall off exponent must be at least 1.");
+    assert(isPowerOf2(specularFallOffExponent_) && "Specular fall off exponent must be power of 2.");
 }
 
 Color BlinnPhong::reflect(const glm::vec3& normal, const glm::vec3& viewerDirection,
@@ -28,8 +29,7 @@ Color BlinnPhong::reflect(const glm::vec3& normal, const glm::vec3& viewerDirect
 
     glm::vec3 reflectionNormal = glm::normalize(viewerDirection + lightDirection);
     float normalReflectionCos = glm::dot(normal, reflectionNormal);
-    Color specular = specularCoefficient_ *
-                     std::powf(std::fmax(0.0f, normalReflectionCos), static_cast<float>(specularFallOffExponent_));
+    Color specular = specularCoefficient_ * pow2(std::fmax(0.0f, normalReflectionCos), specularFallOffExponent_);
 
     return diffuse + specular;
 }
