@@ -10,7 +10,7 @@ class Color;
 struct Light {
     struct DistanceDesc {
         float distance;
-        glm::vec3 direction;
+        glm::vec3 unitDirection;
     };
 
     virtual ~Light() = default;

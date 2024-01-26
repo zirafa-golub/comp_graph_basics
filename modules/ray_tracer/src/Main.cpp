@@ -70,6 +70,11 @@ int main(int argc, char* argv[]) {
     sphere2->setAmbientReflectance(Color(0, 1, 0));
     sphere2->setMaterial(std::make_unique<BlinnPhong>(Color(0, 1, 0), Color(0.4, 0.4, 0.4), 32, Color(0.3, 0.3, 0.3)));
 
+    std::unique_ptr<Sphere> sphere3 = std::make_unique<Sphere>(20.0f);
+    sphere3->setPosition(Point(0, 5, 0));
+    sphere3->setAmbientReflectance(Color(0, 0, 1));
+    sphere3->setMaterial(std::make_unique<BlinnPhong>(Color(0, 0, 1), Color(0.2, 0.2, 0.2), 32, Color(0.3, 0.3, 0.3)));
+
     constexpr float floorWidth = 1000;
     constexpr float floorLength = 100;
     constexpr float floorHeight = -2.0f;
@@ -84,6 +89,7 @@ int main(int argc, char* argv[]) {
 
     scene.addShape(std::move(sphere1));
     scene.addShape(std::move(sphere2));
+    scene.addShape(std::move(sphere3));
     scene.addShape(std::move(floor));
     scene.addLight(std::move(pointLight1));
     scene.addLight(std::move(pointLight2));

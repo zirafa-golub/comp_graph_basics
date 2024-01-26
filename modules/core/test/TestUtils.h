@@ -24,4 +24,5 @@ class PerfectMirrorMaterial : public cg::Material {
 public:
     cg::Color reflect(const glm::vec3& normal, const glm::vec3& viewerDirection,
                       const glm::vec3& lightDirection) const override;
+    cg::Color surfaceReflectance() const override;
 };

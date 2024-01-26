@@ -30,5 +30,7 @@ std::expected<HitDesc, Error> UnhittableShape::hit(const Ray& ray, float tMin, f
 
 Color PerfectMirrorMaterial::reflect(const glm::vec3& normal, const glm::vec3& viewerDirection,
                                      const glm::vec3& lightDirection) const {
-    return Color(1.0, 1.0, 1.0);
+    return Color(1, 1, 1);
 }
+
+cg::Color PerfectMirrorMaterial::surfaceReflectance() const { return Color(1, 1, 1); }

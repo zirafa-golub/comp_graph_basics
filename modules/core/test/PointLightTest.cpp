@@ -46,5 +46,6 @@ TEST(PointLightTest, distanceFrom_shouldReturnExpected) {
 
     auto distanceDesc = light.distanceFrom(Point(1, 1, 1));
     EXPECT_FLOAT_EQ(distanceDesc.distance, 5.0f);
-    areVectorsParallel(distanceDesc.direction, glm::vec3(3, 4, 0));
+    glm::vec3 direction(3, 4, 0);
+    assertVec3FloatEqual(distanceDesc.unitDirection, glm::normalize(direction));
 }

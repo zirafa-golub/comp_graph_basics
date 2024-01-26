@@ -18,6 +18,6 @@ private:
 
     static constexpr float raySurfaceOffset = 0.00001f;
 
-    unsigned maxBounces_ = 10;
+    unsigned maxBounces_ = 5;
 };
 } // namespace cg

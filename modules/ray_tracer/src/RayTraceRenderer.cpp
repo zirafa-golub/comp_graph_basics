@@ -26,20 +26,16 @@ Color RayTraceRenderer::shadeRay(const Scene& scene, const Ray& ray, unsigned cu
         const HitDesc& hit = result.value();
         Point hitPoint = hit.ray.evaluate(hit.tHit);
 
-        // Compute direct illumination from lights
+        // Compute direct illumination from lights while checking if the spot is in a shadow
         for (const auto& light : scene.lights()) {
-            // Check if spot is in shadow
             Light::DistanceDesc lightDistance = light->distanceFrom(hitPoint);
-            if (lightDistance.distance == 0.0f) {
-                pixelColor += light->illuminate(hit);
-            } else {
-                Ray rayToLight(hitPoint + raySurfaceOffset * hit.unitNormal, lightDistance.direction);
-                auto shadowResult = scene.hit(rayToLight, 0, lightDistance.distance);
-                if (!shadowResult.has_value()) {
-                    Color reflectedLight = hit.hitShape->material().reflect(
-                        hit.unitNormal, hit.unitViewDirection, lightDistance.direction / lightDistance.distance);
-                    pixelColor += reflectedLight * light->illuminate(hit);
-                }
+            Ray rayToLight(hitPoint + raySurfaceOffset * hit.unitNormal, lightDistance.unitDirection);
+
+            auto shadowResult = scene.hit(rayToLight, 0, lightDistance.distance);
+            if (!shadowResult.has_value()) {
+                Color reflectedLight = hit.hitShape->material().reflect(hit.unitNormal, hit.unitViewDirection,
+                                                                        lightDistance.unitDirection);
+                pixelColor += reflectedLight * light->illuminate(hit);
             }
         }
 

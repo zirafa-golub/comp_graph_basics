@@ -1,5 +1,7 @@
 #include "core/Sphere.h"
+#include "TestUtils.h"
 
+#include "glm/geometric.hpp"
 #include "gtest/gtest.h"
 
 #include <limits>
@@ -27,7 +29,8 @@ TEST(SphereTest, hit_twoHits_shouldReturnExpected) {
     EXPECT_EQ(hit.hitShape, &sphere);
     EXPECT_EQ(hit.ray, ray);
     EXPECT_FLOAT_EQ(hit.tHit, 2);
-    EXPECT_EQ(hit.unitNormal, glm::vec3(-1, 0, 0));
+    assertVec3FloatEqual(hit.unitNormal, glm::vec3(-1, 0, 0));
+    assertVec3FloatEqual(hit.unitViewDirection, glm::normalize(-ray.direction()));
 }
 
 TEST(SphereTest, hit_twoHitsOneOutOfRange_shouldReturnExpected) {
@@ -43,7 +46,8 @@ TEST(SphereTest, hit_twoHitsOneOutOfRange_shouldReturnExpected) {
     EXPECT_EQ(hit.hitShape, &sphere);
     EXPECT_EQ(hit.ray, ray);
     EXPECT_EQ(hit.tHit, 2);
-    EXPECT_EQ(hit.unitNormal, glm::vec3(1, 0, 0));
+    assertVec3FloatEqual(hit.unitNormal, glm::vec3(-1, 0, 0));
+    assertVec3FloatEqual(hit.unitViewDirection, glm::normalize(-ray.direction()));
 }
 
 TEST(SphereTest, hit_oneHit_shouldReturnExpected) {
@@ -59,7 +63,8 @@ TEST(SphereTest, hit_oneHit_shouldReturnExpected) {
     EXPECT_EQ(hit.hitShape, &sphere);
     EXPECT_EQ(hit.ray, ray);
     EXPECT_EQ(hit.tHit, 4);
-    EXPECT_EQ(hit.unitNormal, glm::vec3(0, 1, 0));
+    assertVec3FloatEqual(hit.unitNormal, glm::vec3(0, 1, 0));
+    assertVec3FloatEqual(hit.unitViewDirection, glm::normalize(-ray.direction()));
 }
 
 TEST(SphereTest, hit_oneHitOutOfRange_shouldReturnError) {

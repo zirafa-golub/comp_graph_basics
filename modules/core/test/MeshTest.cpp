@@ -1,6 +1,8 @@
-#include "gtest/gtest.h"
-
 #include "core/Mesh.h"
+#include "TestUtils.h"
+
+#include "glm/geometric.hpp"
+#include "gtest/gtest.h"
 
 using namespace cg;
 
@@ -111,7 +113,8 @@ TEST(MeshTest, hit_hit_shouldReturnExpected) {
     EXPECT_FLOAT_EQ(hit.tHit, 3);
     EXPECT_EQ(hit.hitShape, &mesh);
     EXPECT_EQ(hit.ray, ray);
-    EXPECT_EQ(hit.unitNormal, glm::vec3(0, 0, -1));
+    assertVec3FloatEqual(hit.unitNormal, glm::vec3(0, 0, -1));
+    assertVec3FloatEqual(hit.unitViewDirection, glm::normalize(-ray.direction()));
 }
 
 TEST(MeshTest, hit_edgeHit_shouldReturnNotFound) {
@@ -134,7 +137,8 @@ TEST(MeshTest, hit_edgeHit_shouldReturnNotFound) {
     EXPECT_FLOAT_EQ(hit.tHit, 1.5);
     EXPECT_EQ(hit.hitShape, &mesh);
     EXPECT_EQ(hit.ray, ray);
-    EXPECT_EQ(hit.unitNormal, glm::vec3(0, 0, -1));
+    assertVec3FloatEqual(hit.unitNormal, glm::vec3(0, 0, -1));
+    assertVec3FloatEqual(hit.unitViewDirection, glm::normalize(-ray.direction()));
 }
 
 TEST(MeshTest, hit_miss_shouldReturnNotFound) {
@@ -208,7 +212,8 @@ TEST(MeshTest, hit_hitOnBound_shouldReturnExpected) {
     EXPECT_FLOAT_EQ(hit.tHit, 3);
     EXPECT_EQ(hit.hitShape, &mesh);
     EXPECT_EQ(hit.ray, ray);
-    EXPECT_EQ(hit.unitNormal, glm::vec3(0, 0, -1));
+    assertVec3FloatEqual(hit.unitNormal, glm::vec3(0, 0, -1));
+    assertVec3FloatEqual(hit.unitViewDirection, glm::normalize(-ray.direction()));
 }
 
 TEST(MeshTest, hit_multipleTriangles_shouldReturnClosest) {
@@ -228,7 +233,8 @@ TEST(MeshTest, hit_multipleTriangles_shouldReturnClosest) {
     EXPECT_FLOAT_EQ(hit.tHit, 3);
     EXPECT_EQ(hit.hitShape, &mesh);
     EXPECT_EQ(hit.ray, ray);
-    EXPECT_EQ(hit.unitNormal, glm::vec3(0, 0, -1));
+    assertVec3FloatEqual(hit.unitNormal, glm::vec3(0, 0, -1));
+    assertVec3FloatEqual(hit.unitViewDirection, glm::normalize(-ray.direction()));
 }
 
 TEST(MeshTest, hit_closestOutOfBounds_shouldReturnFartherHit) {
@@ -248,5 +254,6 @@ TEST(MeshTest, hit_closestOutOfBounds_shouldReturnFartherHit) {
     EXPECT_FLOAT_EQ(hit.tHit, 7);
     EXPECT_EQ(hit.hitShape, &mesh);
     EXPECT_EQ(hit.ray, ray);
-    EXPECT_EQ(hit.unitNormal, glm::vec3(0, 0, 1));
+    assertVec3FloatEqual(hit.unitNormal, glm::vec3(0, 0, 1));
+    assertVec3FloatEqual(hit.unitViewDirection, glm::normalize(-ray.direction()));
 }

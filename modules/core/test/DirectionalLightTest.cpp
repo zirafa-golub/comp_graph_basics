@@ -14,6 +14,13 @@
 
 using namespace cg;
 
+TEST(DirectionalLightTest, constructor_shouldNormalizeDirection) {
+    const glm::vec3 direction{0, 2, 0};
+    DirectionalLight light(direction);
+
+    assertVec3FloatEqual(light.direction(), glm::vec3(0, 1, 0));
+}
+
 TEST(DirectionalLightTest, illuminate_validLightAngle_shouldReturnExpected) {
     UnhittableShape shape;
     shape.setMaterial(std::make_unique<PerfectMirrorMaterial>());
@@ -46,5 +53,5 @@ TEST(DirectionalLightTest, distanceFrom_shouldReturnExpected) {
 
     auto distanceDesc = light.distanceFrom(Point(-3, -2, -1));
     EXPECT_EQ(distanceDesc.distance, std::numeric_limits<float>::infinity());
-    areVectorsParallel(distanceDesc.direction, -direction);
+    assertVec3FloatEqual(distanceDesc.unitDirection, glm::normalize(-direction));
 }

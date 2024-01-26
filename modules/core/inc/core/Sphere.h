@@ -31,7 +31,7 @@ public:
     std::expected<HitDesc, Error> hit(const Ray& ray, float tMin, float tMax) const override;
 
 private:
-    HitDesc formHitDesc(const Ray& ray, float tHit) const;
+    HitDesc formHitDesc(const Ray& ray, float tHit, bool isOriginOutside) const;
 
     float radius_;
 };
