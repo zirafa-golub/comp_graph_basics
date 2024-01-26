@@ -43,7 +43,7 @@ int main(int argc, char* argv[]) {
 
     // Prepare scene
     Scene scene;
-    scene.setAmbientLight(0.05f * Color(1, 1, 1));
+    scene.setAmbientLight(0.05f * Color::white());
 
     std::unique_ptr<PerspectiveCamera> camera = std::make_unique<PerspectiveCamera>();
     camera->setResolution(Camera::Resolution(screenWidth, screenHeight));
@@ -54,26 +54,27 @@ int main(int argc, char* argv[]) {
     camera->setFieldOfView(80_deg);
     camera->update();
 
-    std::unique_ptr<PointLight> pointLight1 = std::make_unique<PointLight>(250 * Color(1, 1, 1));
+    std::unique_ptr<PointLight> pointLight1 = std::make_unique<PointLight>(250 * Color::white());
     pointLight1->setPosition(Point(-3, 6, 6));
 
-    std::unique_ptr<PointLight> pointLight2 = std::make_unique<PointLight>(100 * Color(1, 1, 1));
+    std::unique_ptr<PointLight> pointLight2 = std::make_unique<PointLight>(100 * Color::white());
     pointLight2->setPosition(Point(-4, 4, -8));
 
     std::unique_ptr<Sphere> sphere1 = std::make_unique<Sphere>(2.0f);
     sphere1->setPosition(Point(10, 0, -3));
-    sphere1->setAmbientReflectance(Color(1, 0, 0));
-    sphere1->setMaterial(std::make_unique<BlinnPhong>(Color(1, 0, 0), Color(0.4, 0.4, 0.4), 32, Color(0.3, 0.3, 0.3)));
+    sphere1->setAmbientReflectance(Color::red());
+    sphere1->setMaterial(std::make_unique<BlinnPhong>(Color::red(), 0.4f * Color::white(), 32, 0.3f * Color::white()));
 
     std::unique_ptr<Sphere> sphere2 = std::make_unique<Sphere>(1.0f);
     sphere2->setPosition(Point(6, 1.7f, 0.5f));
-    sphere2->setAmbientReflectance(Color(0, 1, 0));
-    sphere2->setMaterial(std::make_unique<BlinnPhong>(Color(0, 1, 0), Color(0.4, 0.4, 0.4), 32, Color(0.3, 0.3, 0.3)));
+    sphere2->setAmbientReflectance(Color::green());
+    sphere2->setMaterial(
+        std::make_unique<BlinnPhong>(Color::green(), 0.4f * Color(1, 1, 1), 32, 0.3f * Color::white()));
 
     std::unique_ptr<Sphere> sphere3 = std::make_unique<Sphere>(20.0f);
     sphere3->setPosition(Point(0, 5, 0));
-    sphere3->setAmbientReflectance(Color(0, 0, 1));
-    sphere3->setMaterial(std::make_unique<BlinnPhong>(Color(0, 0, 1), Color(0.2, 0.2, 0.2), 32, Color(0.3, 0.3, 0.3)));
+    sphere3->setAmbientReflectance(Color::blue());
+    sphere3->setMaterial(std::make_unique<BlinnPhong>(Color::blue(), 0.2f * Color::white(), 32, 0.3f * Color::white()));
 
     constexpr float floorWidth = 1000;
     constexpr float floorLength = 100;
@@ -85,7 +86,7 @@ int main(int argc, char* argv[]) {
     std::vector<Mesh::TriangleIndices> floorTriangles = {{0, 3, 2}, {0, 2, 1}};
     std::unique_ptr<Mesh> floor = std::make_unique<Mesh>(std::move(floorVertices), std::move(floorTriangles));
     floor->setPosition(Point(0, floorHeight, 0));
-    floor->setMaterial(std::make_unique<BlinnPhong>(Color(0.5, 0.5, 0.5), Color(0, 0, 0), 1, Color(0.3, 0.3, 0.3)));
+    floor->setMaterial(std::make_unique<BlinnPhong>(0.5f * Color::white(), Color::black(), 1, 0.3f * Color::white()));
 
     scene.addShape(std::move(sphere1));
     scene.addShape(std::move(sphere2));

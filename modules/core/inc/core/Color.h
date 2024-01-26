@@ -42,6 +42,10 @@ public:
     constexpr Color operator/(float scalar) const { return Color(rgb_ / scalar); }
 
     static constexpr Color black() { return Color(0, 0, 0); }
+    static constexpr Color white() { return Color(1, 1, 1); }
+    static constexpr Color red() { return Color(1, 0, 0); }
+    static constexpr Color green() { return Color(0, 1, 0); }
+    static constexpr Color blue() { return Color(0, 0, 1); }
 
 private:
     glm::vec3 rgb_;
