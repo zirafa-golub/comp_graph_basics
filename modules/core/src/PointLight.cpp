@@ -18,12 +18,7 @@ Color PointLight::illuminate(const HitDesc& pointDesc) const {
     glm::vec3 lightDirection = pointToLight / lightDistance;
 
     float geometricFactor = std::max(0.0f, glm::dot(pointDesc.unitNormal, lightDirection));
-    Color irradiance = intensity_ * geometricFactor / (lightDistance * lightDistance);
-
-    Color reflectedLightFactor =
-        pointDesc.hitShape->material().reflect(pointDesc.unitNormal, pointDesc.unitViewDirection, lightDirection);
-
-    return irradiance * reflectedLightFactor;
+    return intensity_ * geometricFactor / (lightDistance * lightDistance);
 }
 
 Light::DistanceDesc PointLight::distanceFrom(const Point& point) const {

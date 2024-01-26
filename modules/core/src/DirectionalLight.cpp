@@ -15,11 +15,7 @@ void DirectionalLight::setDirection(const glm::vec3& direction) { direction_ = d
 
 Color DirectionalLight::illuminate(const HitDesc& pointDesc) const {
     float geometricFactor = std::max(0.0f, glm::dot(pointDesc.unitNormal, -direction_));
-    Color irradiance = intensity_ * geometricFactor;
-    Color reflectedLightFactor =
-        pointDesc.hitShape->material().reflect(pointDesc.unitNormal, pointDesc.unitViewDirection, -direction_);
-
-    return irradiance * reflectedLightFactor;
+    return intensity_ * geometricFactor;
 }
 
 Light::DistanceDesc DirectionalLight::distanceFrom(const Point& point) const {

@@ -32,6 +32,10 @@ const Camera& Scene::camera() const { return *camera_; }
 
 cg::Camera& Scene::camera() { return *camera_; }
 
+const Color& Scene::ambientLight() const { return ambientLight_; }
+
+void Scene::setAmbientLight(const Color& newAmbient) { ambientLight_ = newAmbient; }
+
 std::expected<HitDesc, Error> Scene::hit(const Ray& ray, float tMin, float tMax) const {
     std::expected<HitDesc, Error> result = std::unexpected(ErrorCode::NotFound);
     for (const auto& shape : shapes_) {

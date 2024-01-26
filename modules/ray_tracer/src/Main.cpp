@@ -1,6 +1,5 @@
 #include "common/Average.h"
 #include "common/TimeProfiler.h"
-#include "core/AmbientLight.h"
 #include "core/BlinnPhong.h"
 #include "core/DirectionalLight.h"
 #include "core/Mesh.h"
@@ -44,6 +43,7 @@ int main(int argc, char* argv[]) {
 
     // Prepare scene
     Scene scene;
+    scene.setAmbientLight(0.05f * Color(1, 1, 1));
 
     std::unique_ptr<PerspectiveCamera> camera = std::make_unique<PerspectiveCamera>();
     camera->setResolution(Camera::Resolution(screenWidth, screenHeight));
@@ -53,8 +53,6 @@ int main(int argc, char* argv[]) {
     camera->setViewPlaneSize(Size2d(screenWidth, screenHeight));
     camera->setFieldOfView(80_deg);
     camera->update();
-
-    std::unique_ptr<AmbientLight> ambientLight = std::make_unique<AmbientLight>(0.1f * Color(0.1f, 0.1f, 0.1f));
 
     std::unique_ptr<PointLight> pointLight1 = std::make_unique<PointLight>(250 * Color(1, 1, 1));
     pointLight1->setPosition(Point(-3, 6, 6));
@@ -89,7 +87,6 @@ int main(int argc, char* argv[]) {
     scene.addShape(std::move(floor));
     scene.addLight(std::move(pointLight1));
     scene.addLight(std::move(pointLight2));
-    scene.addLight(std::move(ambientLight));
     scene.setCamera(std::move(camera));
 
     // Prepare render loop

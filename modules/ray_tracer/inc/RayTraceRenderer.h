@@ -18,6 +18,6 @@ private:
 
     static constexpr float raySurfaceOffset = 0.00001f;
 
-    unsigned maxBounces_ = std::numeric_limits<unsigned>::max();
+    unsigned maxBounces_ = 10;
 };
 } // namespace cg
