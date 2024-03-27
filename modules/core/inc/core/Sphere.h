@@ -7,9 +7,8 @@
 #include <cmath>
 #include <expected>
 
-#include "glm/geometric.hpp"
-
 namespace cg {
+class Angle;
 class Sphere : public Shape {
 private:
     struct QuadEquationSolution {
@@ -29,10 +28,14 @@ public:
     float radius() const;
 
     std::expected<HitDesc, Error> hit(const Ray& ray, float tMin, float tMax) const override;
+    const MeshData& meshData() const override;
+    void generateMesh(unsigned verticalSegments, unsigned horizontalSegments);
 
 private:
     HitDesc formHitDesc(const Ray& ray, float tHit, bool isOriginOutside) const;
+    Point generatePoint(Angle verticalAngle, Angle horizontalAngle) const;
 
     float radius_;
+    std::unique_ptr<MeshData> meshData_;
 };
 } // namespace cg

@@ -18,8 +18,8 @@ public:
     static constexpr Angle rad(float radians) { return Angle(radians); }
     static constexpr Angle deg(float degrees) { return Angle(degrees * radToDegRatio); }
 
-    constexpr float asDeg() { return angleRad_ / radToDegRatio; }
-    constexpr float asRad() { return angleRad_; }
+    constexpr float asDeg() const { return angleRad_ / radToDegRatio; }
+    constexpr float asRad() const { return angleRad_; }
 
     constexpr auto operator<=>(const Angle&) const = default;
 

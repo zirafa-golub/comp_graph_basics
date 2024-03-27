@@ -101,7 +101,7 @@ TEST(MeshTest, hit_hit_shouldReturnExpected) {
     std::vector<Point> vertices = {vertexA, vertexB, vertexC};
     std::vector<Mesh::TriangleIndices> triangles = {{0, 2, 1}};
 
-    Mesh mesh(std::move(vertices), std::move(triangles));
+    Mesh mesh(MeshData(std::move(vertices), std::move(triangles)));
 
     Ray ray({1, 2, 0}, {0, 0, 1});
 
@@ -125,7 +125,7 @@ TEST(MeshTest, hit_edgeHit_shouldReturnNotFound) {
     std::vector<Point> vertices = {vertexA, vertexB, vertexC};
     std::vector<Mesh::TriangleIndices> triangles = {{0, 2, 1}};
 
-    Mesh mesh(std::move(vertices), std::move(triangles));
+    Mesh mesh(MeshData(std::move(vertices), std::move(triangles)));
 
     Ray ray({2, 2, 0}, {0, 0, 2});
 
@@ -149,7 +149,7 @@ TEST(MeshTest, hit_miss_shouldReturnNotFound) {
     std::vector<Point> vertices = {vertexA, vertexB, vertexC};
     std::vector<Mesh::TriangleIndices> triangles = {{0, 2, 1}};
 
-    Mesh mesh(std::move(vertices), std::move(triangles));
+    Mesh mesh(MeshData(std::move(vertices), std::move(triangles)));
 
     Ray ray({3, 3, 0}, {0, 0, 1});
 
@@ -166,7 +166,7 @@ TEST(MeshTest, hit_missParallel_shouldReturnNotFound) {
     std::vector<Point> vertices = {vertexA, vertexB, vertexC};
     std::vector<Mesh::TriangleIndices> triangles = {{0, 2, 1}};
 
-    Mesh mesh(std::move(vertices), std::move(triangles));
+    Mesh mesh(MeshData(std::move(vertices), std::move(triangles)));
 
     Ray ray({1, 2, 0}, {0, 1, 0});
 
@@ -183,7 +183,7 @@ TEST(MeshTest, hit_hitOutOfBounds_shouldReturnNotFound) {
     std::vector<Point> vertices = {vertexA, vertexB, vertexC};
     std::vector<Mesh::TriangleIndices> triangles = {{0, 2, 1}};
 
-    Mesh mesh(std::move(vertices), std::move(triangles));
+    Mesh mesh(MeshData(std::move(vertices), std::move(triangles)));
 
     Ray ray({1, 2, 0}, {0, 0, 1});
 
@@ -200,7 +200,7 @@ TEST(MeshTest, hit_hitOnBound_shouldReturnExpected) {
     std::vector<Point> vertices = {vertexA, vertexB, vertexC};
     std::vector<Mesh::TriangleIndices> triangles = {{0, 2, 1}};
 
-    Mesh mesh(std::move(vertices), std::move(triangles));
+    Mesh mesh(MeshData(std::move(vertices), std::move(triangles)));
 
     Ray ray({1, 2, 0}, {0, 0, 1});
 
@@ -221,7 +221,7 @@ TEST(MeshTest, hit_multipleTriangles_shouldReturnClosest) {
                                    {0, 0, 7}, {4, 0, 7}, {0, 4, 7}, {4, 4, 7}};
     std::vector<Mesh::TriangleIndices> triangles = {{0, 2, 1}, {1, 2, 3}, {5, 6, 4}, {5, 7, 6}};
 
-    Mesh mesh(std::move(vertices), std::move(triangles));
+    Mesh mesh(MeshData(std::move(vertices), std::move(triangles)));
 
     Ray ray({1, 2, 0}, {0, 0, 1});
 
@@ -242,7 +242,7 @@ TEST(MeshTest, hit_closestOutOfBounds_shouldReturnFartherHit) {
                                    {0, 0, 7}, {4, 0, 7}, {0, 4, 7}, {4, 4, 7}};
     std::vector<Mesh::TriangleIndices> triangles = {{0, 2, 1}, {1, 2, 3}, {5, 6, 4}, {5, 7, 6}};
 
-    Mesh mesh(std::move(vertices), std::move(triangles));
+    Mesh mesh(MeshData(std::move(vertices), std::move(triangles)));
 
     Ray ray({1, 2, 0}, {0, 0, 1});
 

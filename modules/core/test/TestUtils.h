@@ -18,6 +18,10 @@ void areVectorsParallel(const glm::vec3& left, const glm::vec3& right);
 class UnhittableShape : public cg::Shape {
 public:
     std::expected<cg::HitDesc, cg::Error> hit(const cg::Ray& ray, float tMin, float tMax) const override;
+    const cg::MeshData& meshData() const override;
+
+private:
+    cg::MeshData meshData_ = cg::MeshData({}, {});
 };
 
 class PerfectMirrorMaterial : public cg::Material {

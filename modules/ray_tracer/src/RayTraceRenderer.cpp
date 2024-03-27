@@ -1,4 +1,4 @@
-#include "RayTraceRenderer.h"
+#include "ray_tracer/RayTraceRenderer.h"
 
 #include <limits>
 

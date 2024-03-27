@@ -4,6 +4,7 @@
 #include "core/BasicTypes.h"
 #include "core/Color.h"
 #include "core/Material.h"
+#include "core/MeshData.h"
 #include "core/Movable.h"
 #include "core/Ray.h"
 
@@ -30,6 +31,7 @@ struct HitDesc {
 class Shape : public Movable {
 public:
     virtual std::expected<HitDesc, Error> hit(const Ray& ray, float tMin, float tMax) const = 0;
+    virtual const MeshData& meshData() const = 0;
 
     const Material& material() const { return *material_; }
     Material& material() { return *material_; }

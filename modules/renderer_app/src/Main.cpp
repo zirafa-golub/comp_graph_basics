@@ -8,8 +8,8 @@
 #include "core/PointLight.h"
 #include "core/Scene.h"
 #include "core/Sphere.h"
-#include "RayTraceRenderer.h"
-#include "SdlScreen.h"
+#include "ray_tracer/RayTraceRenderer.h"
+#include "screen/SdlScreen.h"
 
 #include "SDL2/SDL.h"
 
@@ -84,7 +84,7 @@ int main(int argc, char* argv[]) {
                                         {-floorLength / 2, 0, floorWidth / 2},
                                         {-floorLength / 2, 0, -floorWidth / 2}};
     std::vector<Mesh::TriangleIndices> floorTriangles = {{0, 3, 2}, {0, 2, 1}};
-    std::unique_ptr<Mesh> floor = std::make_unique<Mesh>(std::move(floorVertices), std::move(floorTriangles));
+    std::unique_ptr<Mesh> floor = std::make_unique<Mesh>(MeshData(std::move(floorVertices), std::move(floorTriangles)));
     floor->setPosition(Point(0, floorHeight, 0));
     floor->setMaterial(std::make_unique<BlinnPhong>(0.5f * Color::white(), Color::black(), 1, 0.3f * Color::white()));
 

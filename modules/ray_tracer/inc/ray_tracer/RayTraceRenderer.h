@@ -1,7 +1,7 @@
 #pragma once
 
 #include "core/Scene.h"
-#include "SdlScreen.h"
+#include "screen/SdlScreen.h"
 
 #include <limits>
 

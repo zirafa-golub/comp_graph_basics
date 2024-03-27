@@ -28,6 +28,8 @@ std::expected<HitDesc, Error> UnhittableShape::hit(const Ray& ray, float tMin, f
     return std::unexpected(ErrorCode::NotFound);
 }
 
+const cg::MeshData& UnhittableShape::meshData() const { return meshData_; }
+
 Color PerfectMirrorMaterial::reflect(const glm::vec3& normal, const glm::vec3& viewerDirection,
                                      const glm::vec3& lightDirection) const {
     return Color(1, 1, 1);

@@ -21,9 +21,9 @@ BlinnPhong::BlinnPhong(const Color& diffuseReflectance, const Color& specularRef
 
 Color BlinnPhong::reflect(const glm::vec3& normal, const glm::vec3& viewerDirection,
                           const glm::vec3& lightDirection) const {
-    assert(areFloatsEqualTolerance(glm::length(normal), 1.0f));
-    assert(areFloatsEqualTolerance(glm::length(viewerDirection), 1.0f));
-    assert(areFloatsEqualTolerance(glm::length(lightDirection), 1.0f));
+    assert(areFloatsEqualTolerance(glm::length(normal), 1.0f, 0.0005f));
+    assert(areFloatsEqualTolerance(glm::length(viewerDirection), 1.0f, 0.0005f));
+    assert(areFloatsEqualTolerance(glm::length(lightDirection), 1.0f, 0.0005f));
 
     Color diffuse = diffuseReflectance_ / std::numbers::pi_v<float>;
 

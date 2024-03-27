@@ -16,18 +16,15 @@ public:
 
     using TriangleIndices = std::array<unsigned, 3>;
 
-    Mesh(std::vector<Point> vertices, std::vector<TriangleIndices> triangles);
-
-    const std::vector<Point>& vertices() const;
-    const std::vector<TriangleIndices>& triangles() const;
+    Mesh(MeshData meshData);
 
     std::expected<HitDesc, Error> hit(const Ray& ray, float tMin, float tMax) const override;
     static std::expected<TriangleHit, ErrorCode> hitTriangle(const Ray& ray, float tMin, float tMax,
                                                              const Point& vertexA, const Point& vertexB,
                                                              const Point& vertexC);
+    const MeshData& meshData() const override;
 
 private:
-    std::vector<Point> vertices_;
-    std::vector<TriangleIndices> triangles_;
+    MeshData meshData_;
 };
 } // namespace cg

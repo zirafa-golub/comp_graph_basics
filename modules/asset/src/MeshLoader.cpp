@@ -38,6 +38,6 @@ std::expected<Mesh, Error> MeshLoader::load(std::filesystem::path path) {
                                                 static_cast<unsigned>(index2.vertex_index)});
     }
 
-    return Mesh(std::move(vertices), std::move(indices));
+    return Mesh(MeshData(std::move(vertices), std::move(indices)));
 }
 } // namespace cg

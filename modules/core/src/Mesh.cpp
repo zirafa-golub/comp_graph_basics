@@ -6,20 +6,18 @@
 #include "glm/gtx/component_wise.hpp"
 
 namespace cg {
-Mesh::Mesh(std::vector<Point> vertices, std::vector<TriangleIndices> triangles)
-    : vertices_(std::move(vertices)), triangles_(std::move(triangles)) {}
-
-const std::vector<Point>& Mesh::vertices() const { return vertices_; }
-const std::vector<Mesh::TriangleIndices>& Mesh::triangles() const { return triangles_; }
+Mesh::Mesh(MeshData meshData) : meshData_(std::move(meshData)) {}
 
 std::expected<HitDesc, Error> Mesh::hit(const Ray& ray, float tMin, float tMax) const {
     float closestHit = std::numeric_limits<float>::max();
     glm::vec3 unitNormal;
 
-    for (const auto& triangle : triangles_) {
-        const auto& vertexA = vertices_[triangle[0]] + position();
-        const auto& vertexB = vertices_[triangle[1]] + position();
-        const auto& vertexC = vertices_[triangle[2]] + position();
+    const auto& triangles = meshData_.triangles();
+    const auto& vertices = meshData_.vertices();
+    for (const auto& triangle : triangles) {
+        const auto& vertexA = vertices[triangle[0]] + position();
+        const auto& vertexB = vertices[triangle[1]] + position();
+        const auto& vertexC = vertices[triangle[2]] + position();
         auto triHitResult = hitTriangle(ray, tMin, tMax, vertexA, vertexB, vertexC);
 
         if (triHitResult.has_value()) {
@@ -90,4 +88,6 @@ std::expected<Mesh::TriangleHit, ErrorCode> Mesh::hitTriangle(const Ray& ray, fl
 
     return TriangleHit{tHit, beta, gamma};
 }
+
+const MeshData& Mesh::meshData() const { return meshData_; }
 } // namespace cg

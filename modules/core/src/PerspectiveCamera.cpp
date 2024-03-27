@@ -6,6 +6,7 @@ namespace cg {
 Angle PerspectiveCamera::fieldOfView() const {
     return Angle::rad(atan((viewPlaneSize().width / 2) / viewPlaneDistance_) * 2);
 }
+
 void PerspectiveCamera::setFieldOfView(Angle fov) {
     auto viewPlane = viewPlaneSize();
     float viewPlaneRatio = viewPlane.width / viewPlane.height;
