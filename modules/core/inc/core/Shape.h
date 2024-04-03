@@ -5,8 +5,8 @@
 #include "core/Color.h"
 #include "core/Material.h"
 #include "core/MeshData.h"
-#include "core/Movable.h"
 #include "core/Ray.h"
+#include "core/Transformable.h"
 
 #include "glm/geometric.hpp"
 
@@ -28,7 +28,7 @@ struct HitDesc {
           unitViewDirection(glm::normalize(-ray.direction())) {}
 };
 
-class Shape : public Movable {
+class Shape : public Transformable {
 public:
     virtual std::expected<HitDesc, Error> hit(const Ray& ray, float tMin, float tMax) const = 0;
     virtual const MeshData& meshData() const = 0;

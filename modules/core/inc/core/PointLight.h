@@ -2,6 +2,7 @@
 
 #include "core/Color.h"
 #include "core/Light.h"
+#include "core/Movable.h"
 
 namespace cg {
 class PointLight : public Light, public Movable {

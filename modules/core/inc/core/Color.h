@@ -23,8 +23,7 @@ public:
 
     constexpr Color clamp() const { return Color(glm::clamp(rgb_, 0.0f, 1.0f)); }
 
-    constexpr bool operator==(const Color& other) const { return rgb_ == other.rgb_; }
-    constexpr bool operator!=(const Color& other) const { return !(*this == other); }
+    constexpr bool operator==(const Color& other) const = default;
 
     constexpr Color operator+(const Color& other) const { return Color(rgb_ + other.rgb_); }
     constexpr Color& operator+=(const Color& other) {

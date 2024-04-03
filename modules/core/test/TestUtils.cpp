@@ -4,7 +4,6 @@
 #include "gtest/gtest.h"
 
 #include "glm/geometric.hpp"
-#include "glm/vec3.hpp"
 
 using namespace cg;
 
@@ -22,6 +21,22 @@ void assertVec3FloatEqual(const glm::vec3& left, const glm::vec3& right) {
 
 void areVectorsParallel(const glm::vec3& left, const glm::vec3& right) {
     assertVec3FloatEqual(glm::normalize(left), glm::normalize(right));
+}
+
+void assertMatricesEqual(const glm::mat4& left, const glm::mat4& right) {
+    for (unsigned i = 0; i < 4; ++i) {
+        for (unsigned j = 0; j < 4; ++j) {
+            EXPECT_FLOAT_EQ(left[i][j], right[i][j]) << "i: " << i << ", j: " << j;
+        }
+    }
+}
+
+void assertMatricesEqualTolerance(const glm::mat4& left, const glm::mat4& right, float tolerance) {
+    for (unsigned i = 0; i < 4; ++i) {
+        for (unsigned j = 0; j < 4; ++j) {
+            EXPECT_NEAR(left[i][j], right[i][j], tolerance) << "i: " << i << ", j: " << j;
+        }
+    }
 }
 
 std::expected<HitDesc, Error> UnhittableShape::hit(const Ray& ray, float tMin, float tMax) const {

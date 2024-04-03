@@ -14,10 +14,11 @@ std::expected<HitDesc, Error> Mesh::hit(const Ray& ray, float tMin, float tMax) 
 
     const auto& triangles = meshData_.triangles();
     const auto& vertices = meshData_.vertices();
+    const auto& toGlobalFrame = toGlobalFrameMatrix();
     for (const auto& triangle : triangles) {
-        const auto& vertexA = vertices[triangle[0]] + position();
-        const auto& vertexB = vertices[triangle[1]] + position();
-        const auto& vertexC = vertices[triangle[2]] + position();
+        glm::vec3 vertexA = toGlobalFrame * glm::vec4(vertices[triangle[0]], 1.0f);
+        glm::vec3 vertexB = toGlobalFrame * glm::vec4(vertices[triangle[1]], 1.0f);
+        glm::vec3 vertexC = toGlobalFrame * glm::vec4(vertices[triangle[2]], 1.0f);
         auto triHitResult = hitTriangle(ray, tMin, tMax, vertexA, vertexB, vertexC);
 
         if (triHitResult.has_value()) {

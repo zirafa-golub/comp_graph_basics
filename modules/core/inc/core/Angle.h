@@ -8,9 +8,9 @@ namespace cg {
 
 class Angle {
 public:
-    Angle() : angleRad_(0.0f) {}
-    Angle(const Angle&) = default;
-    Angle(Angle&&) = default;
+    constexpr Angle() : angleRad_(0.0f) {}
+    constexpr Angle(const Angle&) = default;
+    constexpr Angle(Angle&&) = default;
 
     constexpr Angle& operator=(const Angle&) = default;
     constexpr Angle& operator=(Angle&&) = default;
@@ -33,6 +33,8 @@ public:
         angleRad_ -= other.angleRad_;
         return *this;
     }
+
+    constexpr Angle operator-() { return Angle(-angleRad_); }
 
     template <typename T>
     constexpr friend Angle operator*(const Angle& angle, T scalar)

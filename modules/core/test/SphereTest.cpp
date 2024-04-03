@@ -21,6 +21,7 @@ TEST(SphereTest, center_shouldReturnPosition) {
 TEST(SphereTest, hit_twoHits_shouldReturnExpected) {
     Sphere sphere{3};
     sphere.setPosition(5, 0, 0);
+    sphere.update();
 
     Ray ray{{0, 0, 0}, {1, 0, 0}};
 
@@ -38,6 +39,7 @@ TEST(SphereTest, hit_twoHits_shouldReturnExpected) {
 TEST(SphereTest, hit_twoHitsOneOutOfRange_shouldReturnExpected) {
     Sphere sphere{4};
     sphere.setPosition(0, 0, 0);
+    sphere.update();
 
     Ray ray{{0, 0, 0}, {2, 0, 0}};
 
@@ -55,6 +57,7 @@ TEST(SphereTest, hit_twoHitsOneOutOfRange_shouldReturnExpected) {
 TEST(SphereTest, hit_oneHit_shouldReturnExpected) {
     Sphere sphere{3};
     sphere.setPosition(4, 0, 0);
+    sphere.update();
 
     Ray ray{{0, 3, 0}, {1, 0, 0}};
 
@@ -72,6 +75,7 @@ TEST(SphereTest, hit_oneHit_shouldReturnExpected) {
 TEST(SphereTest, hit_oneHitOutOfRange_shouldReturnError) {
     Sphere sphere{3};
     sphere.setPosition(4, 0, 0);
+    sphere.update();
 
     Ray ray{{0, 3, 0}, {1, 0, 0}};
 
@@ -85,6 +89,7 @@ TEST(SphereTest, hit_oneHitOutOfRange_shouldReturnError) {
 TEST(SphereTest, hit_miss_shouldReturnError) {
     Sphere sphere{3};
     sphere.setPosition(4, 0, 0);
+    sphere.update();
 
     Ray ray{{0, 0, 0}, {0, 1, 0}};
 

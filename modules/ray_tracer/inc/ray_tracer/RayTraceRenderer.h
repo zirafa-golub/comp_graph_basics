@@ -16,7 +16,7 @@ public:
 private:
     Color shadeRay(const Scene& scene, const Ray& ray, unsigned currBounceCount = 0);
 
-    static constexpr float raySurfaceOffset = 0.00001f;
+    static constexpr float raySurfaceOffset = 0.00005f;
 
     unsigned maxBounces_ = 5;
 };

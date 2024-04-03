@@ -14,13 +14,20 @@ const Point& Sphere::center() const { return position(); }
 float Sphere::radius() const { return radius_; }
 
 std::expected<HitDesc, Error> Sphere::hit(const Ray& ray, float tMin, float tMax) const {
-    glm::vec3 originMinusCenter = ray.origin() - center();
+    const auto& toLocalFrame = toLocalFrameMatrix();
+    glm::vec3 localizedOrigin = toLocalFrame * glm::vec4(ray.origin(), 1);
+    glm::vec3 localizedDirection = toLocalFrame * glm::vec4(ray.direction(), 0);
+    Ray localizedRay(localizedOrigin, localizedDirection);
+
+    // since we're doing hit detection in sphere's local frame, we don't need to figure in the sphere center because
+    // it's alsways in frame origin (it's [0, 0, 0])
+    const glm::vec3& centerToOrigin = localizedRay.origin();
     float radiusSquared = radius_ * radius_;
-    float centerToOriginSquared = glm::dot(originMinusCenter, originMinusCenter);
+    float centerToOriginSquared = glm::dot(centerToOrigin, centerToOrigin);
 
     // calulate quadratic equation parameters
-    float a = glm::dot(ray.direction(), ray.direction());
-    float b = 2 * glm::dot(ray.direction(), originMinusCenter);
+    float a = glm::dot(localizedRay.direction(), localizedRay.direction());
+    float b = 2 * glm::dot(localizedRay.direction(), centerToOrigin);
     float c = centerToOriginSquared - radiusSquared;
 
     QuadSolve quadSolve = solveQuadEquation(a, b, c);
@@ -28,20 +35,24 @@ std::expected<HitDesc, Error> Sphere::hit(const Ray& ray, float tMin, float tMax
     if (quadSolve.count > 0) {
         bool isOriginOutside = radiusSquared < centerToOriginSquared;
         if (isInRangeIncl(quadSolve.solutions[0], tMin, tMax)) {
-            return formHitDesc(ray, quadSolve.solutions[0], isOriginOutside);
+            return formHitDesc(ray, localizedRay, quadSolve.solutions[0], isOriginOutside);
         } else if (quadSolve.count == 2 && isInRangeIncl(quadSolve.solutions[1], tMin, tMax)) {
-            return formHitDesc(ray, quadSolve.solutions[1], isOriginOutside);
+            return formHitDesc(ray, localizedRay, quadSolve.solutions[1], isOriginOutside);
         }
     }
 
     return std::unexpected(ErrorCode::NotFound);
 };
 
-HitDesc Sphere::formHitDesc(const Ray& ray, float tHit, bool isOriginOutside) const {
-    Point hitPoint = ray.evaluate(tHit);
-    glm::vec3 unitNormal = isOriginOutside ? (hitPoint - center()) / radius_ : (center() - hitPoint) / radius_;
+void Sphere::transformUpdated() { transposedLocalFrame_ = glm::transpose(toLocalFrameMatrix()); }
 
-    return HitDesc{this, ray, tHit, unitNormal};
+HitDesc Sphere::formHitDesc(const Ray& originalRay, const Ray& localizedRay, float tHit, bool isOriginOutside) const {
+    Point hitPoint = localizedRay.evaluate(tHit);
+
+    glm::vec3 localizedUnitNormal = isOriginOutside ? hitPoint / radius_ : -hitPoint / radius_;
+    glm::vec3 unitNormal = transposedLocalFrame_ * localizedUnitNormal;
+
+    return HitDesc{this, originalRay, tHit, glm::normalize(unitNormal)};
 }
 
 const MeshData& Sphere::meshData() const {

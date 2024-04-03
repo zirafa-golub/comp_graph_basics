@@ -3,6 +3,8 @@
 #include "BasicTypes.h"
 #include "Shape.h"
 
+#include "glm/mat4x4.hpp"
+
 #include <array>
 #include <cmath>
 #include <expected>
@@ -31,11 +33,15 @@ public:
     const MeshData& meshData() const override;
     void generateMesh(unsigned verticalSegments, unsigned horizontalSegments);
 
+protected:
+    void transformUpdated() override;
+
 private:
-    HitDesc formHitDesc(const Ray& ray, float tHit, bool isOriginOutside) const;
+    HitDesc formHitDesc(const Ray& originalRay, const Ray& localizedRay, float tHit, bool isOriginOutside) const;
     Point generatePoint(Angle verticalAngle, Angle horizontalAngle) const;
 
     float radius_;
+    glm::mat3 transposedLocalFrame_;
     std::unique_ptr<MeshData> meshData_;
 };
 } // namespace cg

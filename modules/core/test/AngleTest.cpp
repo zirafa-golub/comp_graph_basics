@@ -58,6 +58,13 @@ TEST(AngleTest, operatorMinusAssign_shouldSubtractAngles) {
     EXPECT_FLOAT_EQ(a1.asRad(), std::numbers::pi_v<float> / 2);
 }
 
+TEST(AngleTest, operatorUnaryMinus_shouldChangeAngleSign) {
+    auto a1 = Angle::deg(-30);
+    auto a2 = -a1;
+
+    EXPECT_FLOAT_EQ(a2.asRad(), std::numbers::pi_v<float> / 6);
+}
+
 TEST(AngleTest, operatorMultiply_integer_shouldMultiplyAngleWithScalar) {
     auto a1 = Angle::deg(45);
     auto a2 = 4 * a1;
