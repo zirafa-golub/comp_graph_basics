@@ -16,7 +16,7 @@ float Sphere::radius() const { return radius_; }
 std::expected<HitDesc, Error> Sphere::hit(const Ray& ray, float tMin, float tMax) const {
     const auto& toLocalFrame = toLocalFrameMatrix();
     glm::vec3 localizedOrigin = toLocalFrame * glm::vec4(ray.origin(), 1);
-    glm::vec3 localizedDirection = toLocalFrame * glm::vec4(ray.direction(), 0);
+    glm::vec3 localizedDirection = glm::mat3(toLocalFrame) * ray.direction();
     Ray localizedRay(localizedOrigin, localizedDirection);
 
     // since we're doing hit detection in sphere's local frame, we don't need to figure in the sphere center because
