@@ -11,7 +11,7 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 if(MSVC)
-  add_compile_options(/W3)
+  add_compile_options(/W3 /MP)
 else()
   add_compile_options(-Wall)
 endif()
