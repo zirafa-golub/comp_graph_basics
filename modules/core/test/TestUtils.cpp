@@ -19,6 +19,11 @@ void assertVec3FloatEqual(const glm::vec3& left, const glm::vec3& right) {
     EXPECT_FLOAT_EQ(left.z, right.z);
 }
 
+void assertSize2dFloatEqual(const Size2d& left, const Size2d& right) {
+    EXPECT_FLOAT_EQ(left.width, right.width);
+    EXPECT_FLOAT_EQ(left.height, right.height);
+}
+
 void areVectorsParallel(const glm::vec3& left, const glm::vec3& right) {
     assertVec3FloatEqual(glm::normalize(left), glm::normalize(right));
 }

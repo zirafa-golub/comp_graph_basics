@@ -18,22 +18,29 @@ public:
 
     Camera();
     virtual ~Camera() = default;
+    Camera(Camera&&) = default;
+    Camera(const Camera&) = default;
+    Camera& operator=(Camera&&) = default;
+    Camera& operator=(const Camera&) = default;
 
     virtual Ray castRay(unsigned pixelX, unsigned pixelY) const = 0;
 
+    // View vectors modifiers
     const glm::vec3& viewDirection() const;
     void setViewDirection(const glm::vec3& viewDirection, const glm::vec3& upVector);
-
     const glm::vec3& upVector() const;
 
+    // View plane, resolution and pixel size modifiers
     Resolution resolution() const;
-    void setResolution(Resolution newRes);
-
+    void setResolution(Resolution newRes, bool adjustAspectRatio = true);
+    float aspectRatio() const;
+    void setAspectRatio(float ratio);
     Size2d viewPlaneSize() const;
     void setViewPlaneSize(Size2d newSize);
-
+    void setViewPlaneWidth(float newWidth);
     Size2d pixelSize() const;
 
+    // Must be called after modifying the camera, otherwise non-modifying calls might not work correctly
     virtual void update();
 
 protected:
