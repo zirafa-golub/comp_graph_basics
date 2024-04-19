@@ -64,17 +64,20 @@ int main(int argc, char* argv[]) {
     sphere1->setPosition(Point(10, 0, -3));
     sphere1->setAmbientReflectance(Color::red());
     sphere1->setMaterial(std::make_unique<BlinnPhong>(Color::red(), 0.4f * Color::white(), 32, 0.3f * Color::white()));
+    sphere1->update();
 
     std::unique_ptr<Sphere> sphere2 = std::make_unique<Sphere>(1.0f);
     sphere2->setPosition(Point(6, 1.7f, 0.5f));
     sphere2->setAmbientReflectance(Color::green());
     sphere2->setMaterial(
         std::make_unique<BlinnPhong>(Color::green(), 0.4f * Color(1, 1, 1), 32, 0.3f * Color::white()));
+    sphere2->update();
 
     std::unique_ptr<Sphere> sphere3 = std::make_unique<Sphere>(20.0f);
     sphere3->setPosition(Point(0, 5, 0));
     sphere3->setAmbientReflectance(Color::blue());
     sphere3->setMaterial(std::make_unique<BlinnPhong>(Color::blue(), 0.2f * Color::white(), 32, 0.3f * Color::white()));
+    sphere3->update();
 
     constexpr float floorWidth = 1000;
     constexpr float floorLength = 100;
@@ -87,6 +90,7 @@ int main(int argc, char* argv[]) {
     std::unique_ptr<Mesh> floor = std::make_unique<Mesh>(MeshData(std::move(floorVertices), std::move(floorTriangles)));
     floor->setPosition(Point(0, floorHeight, 0));
     floor->setMaterial(std::make_unique<BlinnPhong>(0.5f * Color::white(), Color::black(), 1, 0.3f * Color::white()));
+    floor->update();
 
     scene.addShape(std::move(sphere1));
     scene.addShape(std::move(sphere2));

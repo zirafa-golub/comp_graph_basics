@@ -1,5 +1,7 @@
 #pragma once
 
+#include "common/Math.h"
+#include "core/BasicTypes.h"
 #include "core/Rotation.h"
 
 #include "glm/ext/matrix_transform.hpp"
@@ -68,6 +70,30 @@ struct TransformUtils {
         mat[0] = rot[0] * mat[0][0];
         mat[1] = rot[1] * mat[1][1];
         mat[2] = rot[2] * mat[2][2];
+    }
+
+    static glm::mat4 rotationToBasisMatrix(const glm::vec3& u, const glm::vec3& v, const glm::vec3& w) {
+        assert(areFloatsEqualTolerance(glm::length(u), 1.0f, 0.000005f));
+        assert(areFloatsEqualTolerance(glm::length(v), 1.0f, 0.000005f));
+        assert(areFloatsEqualTolerance(glm::length(w), 1.0f, 0.000005f));
+        assert(areFloatsEqualTolerance(glm::dot(u, v), 0.000005f));
+        assert(areFloatsEqualTolerance(glm::dot(u, w), 0.000005f));
+        assert(areFloatsEqualTolerance(glm::dot(v, w), 0.000005f));
+
+        return glm::mat4({u.x, v.x, w.x, 0}, {u.y, v.y, w.y, 0}, {u.z, v.z, w.z, 0}, {0, 0, 0, 1});
+    }
+
+    static glm::mat4 viewToCanonicalMatrix(Size2d viewPlaneSize, float near, float far) {
+        // NOTE: Locally, the camera always looks down the -z axis direction
+        float right = viewPlaneSize.width / 2;
+        float left = -right;
+        float top = viewPlaneSize.height / 2;
+        float bottom = -top;
+
+        return glm::mat4({2 / viewPlaneSize.width, 0, 0, 0}, {0, 2 / viewPlaneSize.height, 0, 0},
+                         {0, 0, 2 / (near - far), 0},
+                         {-(right + left) / viewPlaneSize.width, -(top + bottom) / viewPlaneSize.height,
+                          -(near + far) / (near - far), 1});
     }
 };
 } // namespace cg

@@ -15,10 +15,11 @@ class Color;
 
 void assertColorsFloatEqual(const cg::Color& left, const cg::Color& right);
 void assertVec3FloatEqual(const glm::vec3& left, const glm::vec3& right);
+void assertVec4FloatEqual(const glm::vec4& left, const glm::vec4& right);
 void assertSize2dFloatEqual(const cg::Size2d& left, const cg::Size2d& right);
 void areVectorsParallel(const glm::vec3& left, const glm::vec3& right);
-void assertMatricesEqual(const glm::mat4& left, const glm::mat4& right);
-void assertMatricesEqualTolerance(const glm::mat4& left, const glm::mat4& right, float tolerance = 1e-7f);
+void assertMat4FloatEqual(const glm::mat4& left, const glm::mat4& right);
+void assertMat4EqualTolerance(const glm::mat4& left, const glm::mat4& right, float tolerance = 1e-7f);
 
 class UnhittableShape : public cg::Shape {
 public:

@@ -19,6 +19,13 @@ void assertVec3FloatEqual(const glm::vec3& left, const glm::vec3& right) {
     EXPECT_FLOAT_EQ(left.z, right.z);
 }
 
+void assertVec4FloatEqual(const glm::vec4& left, const glm::vec4& right) {
+    EXPECT_FLOAT_EQ(left.x, right.x);
+    EXPECT_FLOAT_EQ(left.y, right.y);
+    EXPECT_FLOAT_EQ(left.z, right.z);
+    EXPECT_FLOAT_EQ(left.w, right.w);
+}
+
 void assertSize2dFloatEqual(const Size2d& left, const Size2d& right) {
     EXPECT_FLOAT_EQ(left.width, right.width);
     EXPECT_FLOAT_EQ(left.height, right.height);
@@ -28,7 +35,7 @@ void areVectorsParallel(const glm::vec3& left, const glm::vec3& right) {
     assertVec3FloatEqual(glm::normalize(left), glm::normalize(right));
 }
 
-void assertMatricesEqual(const glm::mat4& left, const glm::mat4& right) {
+void assertMat4FloatEqual(const glm::mat4& left, const glm::mat4& right) {
     for (unsigned i = 0; i < 4; ++i) {
         for (unsigned j = 0; j < 4; ++j) {
             EXPECT_FLOAT_EQ(left[i][j], right[i][j]) << "i: " << i << ", j: " << j;
@@ -36,7 +43,7 @@ void assertMatricesEqual(const glm::mat4& left, const glm::mat4& right) {
     }
 }
 
-void assertMatricesEqualTolerance(const glm::mat4& left, const glm::mat4& right, float tolerance) {
+void assertMat4EqualTolerance(const glm::mat4& left, const glm::mat4& right, float tolerance) {
     for (unsigned i = 0; i < 4; ++i) {
         for (unsigned j = 0; j < 4; ++j) {
             EXPECT_NEAR(left[i][j], right[i][j], tolerance) << "i: " << i << ", j: " << j;

@@ -8,16 +8,20 @@ using namespace cg;
 struct TestCamera : public Camera {
     Ray castRay(unsigned pixelX, unsigned pixelY) const override { return Ray({0, 0, 0}, {0, 0, 1}); }
     const glm::vec3& rightVector() { return Camera::rightVector(); }
+    const glm::mat4& projectionTransform() const override { return projectionMatrix_; }
+
+    unsigned onUpdatedCallCount = 0;
+    glm::mat4 projectionMatrix_ = glm::identity<glm::mat4>();
+
+protected:
+    void onUpdated() override { ++onUpdatedCallCount; }
 };
 
 TEST(CameraTest, modify_shouldApplyModificationAfterUpdate) {
     TestCamera camera;
 
-    glm::vec3 initRight = camera.rightVector();
-    glm::vec3 initUp = camera.upVector();
     Size2d initPixelSize = camera.pixelSize();
 
-    Camera::Resolution initRes = camera.resolution();
     Camera::Resolution newRes{200, 300};
     glm::vec3 newDir = {-2, 0, 0};
     glm::vec3 newUp = {1, 0, 1};
@@ -25,37 +29,40 @@ TEST(CameraTest, modify_shouldApplyModificationAfterUpdate) {
     Size2d newViewPlane{initViewPlane.width / 2, initViewPlane.height / 3};
 
     camera.setResolution(newRes);
-    EXPECT_EQ(camera.resolution(), newRes);
     camera.setViewDirection(newDir, newUp);
-    EXPECT_EQ(camera.viewDirection(), newDir);
     camera.setViewPlaneSize(newViewPlane);
-    EXPECT_EQ(camera.viewPlaneSize(), newViewPlane);
-
-    EXPECT_EQ(initRight, camera.rightVector());
-    EXPECT_EQ(initPixelSize, camera.pixelSize());
 
     camera.update();
 
-    EXPECT_EQ(camera.rightVector(), glm::vec3({0, 1, 0}));
-    EXPECT_EQ(camera.upVector(), glm::vec3({0, 0, 1}));
+    EXPECT_EQ(camera.resolution(), newRes);
+    EXPECT_EQ(camera.viewPlaneSize(), newViewPlane);
+    assertVec3FloatEqual(camera.viewDirection(), glm::vec3(-1, 0, 0));
+    assertVec3FloatEqual(camera.rightVector(), glm::vec3({0, 1, 0}));
+    assertVec3FloatEqual(camera.upVector(), glm::vec3({0, 0, 1}));
     EXPECT_EQ(camera.pixelSize(), Size2d(initPixelSize.width / 4, initPixelSize.height / 9));
 }
 
-TEST(CameraTest, viewVectorModifiers_shouldReturnExpected) {
+TEST(CameraTest, setViewDirection_shouldUpdateViewVectorsAfterUpdate) {
     TestCamera camera;
 
-    glm::vec3 initRight = camera.rightVector();
-    glm::vec3 initUp = camera.upVector();
-
-    glm::vec3 newDir = {-2, 0, 0};
-    glm::vec3 newUp = {1, 0, 1};
-
-    camera.setViewDirection(newDir, newUp);
+    camera.setViewDirection({-2, 0, 0}, {1, 0, 1});
     camera.update();
 
-    EXPECT_EQ(camera.viewDirection(), glm::vec3(-1, 0, 0));
-    EXPECT_EQ(camera.rightVector(), glm::vec3(0, 1, 0));
-    EXPECT_EQ(camera.upVector(), glm::vec3(0, 0, 1));
+    assertVec3FloatEqual(camera.viewDirection(), glm::vec3(-1, 0, 0));
+    assertVec3FloatEqual(camera.upVector(), glm::vec3(0, 0, 1));
+    assertVec3FloatEqual(camera.rightVector(), glm::vec3(0, 1, 0));
+}
+
+TEST(CameraTest, lookAt_shouldUpdateViewVectorsAfterUpdate) {
+    TestCamera camera;
+
+    camera.setPosition(1, 0, 0);
+    camera.lookAt({1, 0, 5}, {0, 4, 3});
+    camera.update();
+
+    assertVec3FloatEqual(camera.viewDirection(), glm::vec3(0, 0, 1));
+    assertVec3FloatEqual(camera.upVector(), glm::vec3(0, 1, 0));
+    assertVec3FloatEqual(camera.rightVector(), glm::vec3(-1, 0, 0));
 }
 
 TEST(CameraTest, setResolution_adjustAspectRatio_shouldModifyViewPlaneSize) {
@@ -136,3 +143,55 @@ TEST(CameraTest, setViewPlaneSize_shouldAffectPixelSize) {
                                                       initPixelSize.height * heightIncreaseFactor));
     EXPECT_FLOAT_EQ(camera.aspectRatio(), initAspectRatio * widthIncreaseFactor / heightIncreaseFactor);
 }
+
+TEST(CameraTest, update_shouldCallOnUpdated) {
+    TestCamera camera;
+
+    camera.update();
+    EXPECT_EQ(camera.onUpdatedCallCount, 1);
+}
+
+TEST(CameraTest, cameraTransform_shouldReturnExpected) {
+    TestCamera camera;
+
+    camera.setPosition(1, 0, 1);
+    camera.setViewDirection(glm::vec3(1, 0, 0), glm::vec3(0, 1, 0));
+    camera.update();
+
+    glm::mat4 expected = {{0, 0, -1, 0}, {0, 1, 0, 0}, {1, 0, 0, 0}, {-1, 0, 1, 1}};
+    glm::mat4 cameraTransform = camera.cameraTransform();
+    assertMat4FloatEqual(cameraTransform, expected);
+    assertVec4FloatEqual(cameraTransform * glm::vec4(4, 0, 2, 1), glm::vec4(1, 0, -3, 1));
+}
+
+TEST(CameraTest, viewportTransform_shouldReturnExpected) {
+    TestCamera camera;
+
+    camera.setResolution({160, 100});
+    camera.update();
+
+    glm::mat4 expected = {{80, 0, 0, 0}, {0, 50, 0, 0}, {0, 0, 1, 0}, {79.5f, 49.5, 0, 1}};
+    glm::mat4 viewportTransform = camera.viewportTransform();
+    assertMat4FloatEqual(viewportTransform, expected);
+    assertVec4FloatEqual(viewportTransform * glm::vec4(0.5f, 0, 0.34f, 1), glm::vec4(119.5, 49.5, 0.34f, 1));
+}
+
+#ifndef NDEBUG
+TEST(CameraTest, setViewPlaneDistance_zeroDistance_shouldTriggerAssert) {
+    TestCamera camera;
+
+    ASSERT_DEATH(camera.setViewPlaneDistance(0), ".*");
+}
+
+TEST(CameraTest, setViewPlaneDistance_distanceBeyondLimit_shouldTriggerAssert) {
+    TestCamera camera;
+
+    ASSERT_DEATH(camera.setViewPlaneDistance(camera.viewLimit() + 1), ".*");
+}
+
+TEST(CameraTest, setViewPlaneLimit_limitBeforeDistance_shouldTriggerAssert) {
+    TestCamera camera;
+
+    ASSERT_DEATH(camera.setViewLimit(camera.viewPlaneDistance() / 2), ".*");
+}
+#endif

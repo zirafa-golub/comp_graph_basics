@@ -49,10 +49,12 @@ void Sphere::transformUpdated() { transposedLocalFrame_ = glm::transpose(toLocal
 HitDesc Sphere::formHitDesc(const Ray& originalRay, const Ray& localizedRay, float tHit, bool isOriginOutside) const {
     Point hitPoint = localizedRay.evaluate(tHit);
 
-    glm::vec3 localizedUnitNormal = isOriginOutside ? hitPoint / radius_ : -hitPoint / radius_;
-    glm::vec3 unitNormal = transposedLocalFrame_ * localizedUnitNormal;
+    glm::vec3 localizedNormal = isOriginOutside ? hitPoint : -hitPoint;
+    // To transform the normal vector to global frame, we need the transposed inverse of the to-global-frame transform
+    // which is transposed to-local-frame transform
+    glm::vec3 unitNormal = glm::normalize(transposedLocalFrame_ * localizedNormal);
 
-    return HitDesc{this, originalRay, tHit, glm::normalize(unitNormal)};
+    return HitDesc{this, originalRay, tHit, unitNormal};
 }
 
 const MeshData& Sphere::meshData() const {

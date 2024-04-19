@@ -26,7 +26,7 @@ TEST(TransformableTest, toGlobal_shouldGenerateExpected) {
     expected = glm::rotate(expected, rotation.x.asRad(), glm::vec3(1, 0, 0));
     expected = glm::scale(expected, scale);
 
-    assertMatricesEqualTolerance(t.toGlobalFrameMatrix(), expected, 1e-6f);
+    assertMat4EqualTolerance(t.toGlobalFrameMatrix(), expected, 1e-6f);
 }
 
 TEST(TransformableTest, toLocal_shouldGenerateExpected) {
@@ -47,5 +47,5 @@ TEST(TransformableTest, toLocal_shouldGenerateExpected) {
     expected = glm::rotate(expected, -rotation.z.asRad(), glm::vec3(0, 0, 1));
     expected = glm::translate(expected, -position);
 
-    assertMatricesEqualTolerance(t.toLocalFrameMatrix(), expected, 1e-6f);
+    assertMat4EqualTolerance(t.toLocalFrameMatrix(), expected, 1e-6f);
 }

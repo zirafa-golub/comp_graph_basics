@@ -1,40 +1,28 @@
 #include "core/PerspectiveCamera.h"
 
+#include "core/TransformUtils.h"
+
 #include <cmath>
 
 namespace cg {
 Angle PerspectiveCamera::fieldOfView() const {
-    return Angle::rad(atan((viewPlaneSize().width / 2) / viewPlaneDistance_) * 2);
+    return Angle::rad(atan((viewPlaneSize().width / 2) / viewPlaneDistance()) * 2);
 }
 
 void PerspectiveCamera::setFieldOfView(Angle fov) {
     auto viewPlane = viewPlaneSize();
     float viewPlaneRatio = viewPlane.width / viewPlane.height;
 
-    float newWidth = tan(fov.asRad() / 2) * viewPlaneDistance_ * 2;
+    float newWidth = tan(fov.asRad() / 2) * viewPlaneDistance() * 2;
 
     setViewPlaneWidth(newWidth);
-}
-
-float PerspectiveCamera::viewPlaneDistance() const { return viewPlaneDistance_; }
-
-void PerspectiveCamera::setViewPlaneDistance(float distance) {
-    assert(distance > 0 && distance < viewLimit_);
-    viewPlaneDistance_ = distance;
-}
-
-float PerspectiveCamera::viewLimit() const { return viewLimit_; }
-
-void PerspectiveCamera::setViewLimit(float limit) {
-    assert(limit > viewPlaneDistance_);
-    viewLimit_ = limit;
 }
 
 PerspectiveCamera::FrustumPoints PerspectiveCamera::frustumPoints() const {
     FrustumPoints frustum;
 
     const glm::vec3& cameraPos = position();
-    glm::vec3 toNearPlane = viewDirection() * viewPlaneDistance_;
+    glm::vec3 toNearPlane = viewDirection() * viewPlaneDistance();
     glm::vec3 nearRightOffset = rightVector() * (viewPlaneSize().width / 2);
     glm::vec3 nearUpOffset = upVector() * (viewPlaneSize().height / 2);
 
@@ -43,8 +31,8 @@ PerspectiveCamera::FrustumPoints PerspectiveCamera::frustumPoints() const {
     frustum.nrb = cameraPos + toNearPlane + nearRightOffset - nearUpOffset;
     frustum.nrt = cameraPos + toNearPlane + nearRightOffset + nearUpOffset;
 
-    glm::vec3 toFarPlane = viewDirection() * viewLimit_;
-    float nearFarRatio = viewLimit_ / viewPlaneDistance_;
+    glm::vec3 toFarPlane = viewDirection() * viewLimit();
+    float nearFarRatio = viewLimit() / viewPlaneDistance();
     float farPlaneHalfWidth = nearFarRatio * (viewPlaneSize().width / 2);
     float farPlaneHalfHeight = nearFarRatio * (viewPlaneSize().height / 2);
     glm::vec3 farRightOffset = rightVector() * farPlaneHalfWidth;
@@ -67,8 +55,19 @@ Ray PerspectiveCamera::castRay(unsigned pixelX, unsigned pixelY) const {
     float offsetHor = left + (pixelX + 0.5f) * pixelSize().width;
     float offsetVer = bottom + (pixelY + 0.5f) * pixelSize().height;
 
-    glm::vec3 direction = viewDirection() * viewPlaneDistance_ + offsetHor * rightVector() + offsetVer * upVector();
+    glm::vec3 direction = viewDirection() * viewPlaneDistance() + offsetHor * rightVector() + offsetVer * upVector();
 
     return Ray(position() + direction, direction);
+}
+
+const glm::mat4& PerspectiveCamera::projectionTransform() const { return projectionTransform_; }
+void PerspectiveCamera::onUpdated() {
+    // NOTE: Locally, the camera always looks down the -z axis direction
+    float near = -viewPlaneDistance();
+    float far = -viewLimit();
+
+    auto viewToCanonical = TransformUtils::viewToCanonicalMatrix(viewPlaneSize(), -viewPlaneDistance(), -viewLimit());
+    projectionTransform_ =
+        viewToCanonical * glm::mat4({near, 0, 0, 0}, {0, near, 0, 0}, {0, 0, near + far, 1}, {0, 0, -near * far, 0});
 }
 } // namespace cg

@@ -11,7 +11,6 @@ using namespace cg::angle_literals;
 TEST(PerspectiveCameraTest, setFieldOfView_shouldAffectViewPlaneAfterUpdate) {
     PerspectiveCamera camera;
 
-    Size2d initViewPlaneSize = camera.viewPlaneSize();
     float initDistance = camera.viewPlaneDistance();
 
     Angle fov = 90_deg;
@@ -55,6 +54,20 @@ TEST(PerspectiveCameraTest, frustumPoints_shouldReturnExpectedFrustum) {
     assertVec3FloatEqual(frustum.frt, camPos + glm::vec3(-expectedFarHorOffset, expectedFarVerOffset, expectedFar));
 }
 
+TEST(PerspectiveCameraTest, projectionTransform_shouldReturnExpected) {
+    PerspectiveCamera camera;
+
+    camera.setViewPlaneSize({20, 10});
+    camera.setViewPlaneDistance(5);
+    camera.setViewLimit(25);
+    camera.update();
+
+    glm::mat4 expected = {{-0.5, 0, 0, 0}, {0, -1, 0, 0}, {0, 0, -1.5, 1}, {0, 0, -12.5f, 0}};
+    glm::mat4 projectionTransform = camera.projectionTransform();
+    assertMat4FloatEqual(projectionTransform, expected);
+    assertVec4FloatEqual(projectionTransform * glm::vec4(15, -7.5, -15, 1), glm::vec4(-7.5f, 7.5, 10, -15));
+}
+
 TEST(PerspectiveCameraTest, castRay_evenPixelCount_shouldReturnExpectedRay) {
     PerspectiveCamera camera;
 
@@ -90,24 +103,6 @@ TEST(PerspectiveCameraTest, castRay_oddPixelCount_shouldReturnExpectedRay) {
 }
 
 #ifndef NDEBUG
-TEST(PerspectiveCameraTest, setViewPlaneDistance_zeroDistance_shouldTriggerAssert) {
-    PerspectiveCamera camera;
-
-    ASSERT_DEATH(camera.setViewPlaneDistance(0), ".*");
-}
-
-TEST(PerspectiveCameraTest, setViewPlaneDistance_distanceBeyondLimit_shouldTriggerAssert) {
-    PerspectiveCamera camera;
-
-    ASSERT_DEATH(camera.setViewPlaneDistance(camera.viewLimit() + 1), ".*");
-}
-
-TEST(PerspectiveCameraTest, setViewPlaneLimit_limitBeforeDistance_shouldTriggerAssert) {
-    PerspectiveCamera camera;
-
-    ASSERT_DEATH(camera.setViewLimit(camera.viewPlaneDistance() / 2), ".*");
-}
-
 TEST(PerspectiveCameraTest, castRay_invalidPixel_shouldTriggerAssert) {
     PerspectiveCamera camera;
 

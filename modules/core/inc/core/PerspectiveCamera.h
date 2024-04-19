@@ -27,18 +27,16 @@ public:
     Angle fieldOfView() const;
     void setFieldOfView(Angle fov);
 
-    float viewPlaneDistance() const;
-    void setViewPlaneDistance(float distance);
-
-    float viewLimit() const;
-    void setViewLimit(float limit);
-
     FrustumPoints frustumPoints() const;
 
     Ray castRay(unsigned pixelX, unsigned pixelY) const override;
 
+    const glm::mat4& projectionTransform() const override;
+
+protected:
+    void onUpdated() override;
+
 private:
-    float viewPlaneDistance_ = 1.0f;
-    float viewLimit_ = 100'000.0f;
+    glm::mat4 projectionTransform_;
 };
 } // namespace cg
