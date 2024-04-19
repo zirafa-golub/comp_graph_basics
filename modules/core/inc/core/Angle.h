@@ -23,18 +23,18 @@ public:
 
     constexpr auto operator<=>(const Angle&) const = default;
 
-    constexpr Angle operator+(const Angle& other) { return Angle{angleRad_ + other.angleRad_}; }
+    constexpr Angle operator+(const Angle& other) const { return Angle{angleRad_ + other.angleRad_}; }
     constexpr Angle& operator+=(const Angle& other) {
         angleRad_ += other.angleRad_;
         return *this;
     }
-    constexpr Angle operator-(const Angle& other) { return Angle{angleRad_ - other.angleRad_}; }
+    constexpr Angle operator-(const Angle& other) const { return Angle{angleRad_ - other.angleRad_}; }
     constexpr Angle& operator-=(const Angle& other) {
         angleRad_ -= other.angleRad_;
         return *this;
     }
 
-    constexpr Angle operator-() { return Angle(-angleRad_); }
+    constexpr Angle operator-() const { return Angle(-angleRad_); }
 
     template <typename T>
     constexpr friend Angle operator*(const Angle& angle, T scalar)
@@ -59,7 +59,7 @@ public:
     }
 
     template <typename T>
-    constexpr Angle operator/(T scalar)
+    constexpr Angle operator/(T scalar) const
         requires std::is_arithmetic_v<T>
     {
         return Angle(angleRad_ / static_cast<float>(scalar));

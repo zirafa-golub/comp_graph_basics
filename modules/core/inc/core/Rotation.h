@@ -26,7 +26,9 @@ struct Rotation {
 
     constexpr bool operator==(const Rotation& other) const = default;
 
-    constexpr Rotation operator+(const Rotation& other) { return Rotation(x + other.x, y + other.y, z + other.z); }
+    constexpr Rotation operator+(const Rotation& other) const {
+        return Rotation(x + other.x, y + other.y, z + other.z);
+    }
     constexpr Rotation& operator+=(const Rotation& other) {
         x += other.x;
         y += other.y;
@@ -34,7 +36,9 @@ struct Rotation {
         return *this;
     }
 
-    constexpr Rotation operator-(const Rotation& other) { return Rotation(x - other.x, y - other.y, z - other.z); }
+    constexpr Rotation operator-(const Rotation& other) const {
+        return Rotation(x - other.x, y - other.y, z - other.z);
+    }
     constexpr Rotation& operator-=(const Rotation& other) {
         x -= other.x;
         y -= other.y;
@@ -42,7 +46,7 @@ struct Rotation {
         return *this;
     }
 
-    constexpr Rotation operator-() { return Rotation(-x, -y, -z); }
+    constexpr Rotation operator-() const { return Rotation(-x, -y, -z); }
 
     template <typename T>
     constexpr friend Rotation operator*(const Rotation& rot, T scalar)
@@ -69,7 +73,7 @@ struct Rotation {
     }
 
     template <typename T>
-    constexpr Rotation operator/(T scalar)
+    constexpr Rotation operator/(T scalar) const
         requires std::is_arithmetic_v<T>
     {
         return Rotation(x / scalar, y / scalar, z / scalar);
