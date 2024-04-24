@@ -17,6 +17,7 @@ else()
 endif()
 
 add_subdirectory("modules/common")
+add_subdirectory("modules/test_utils")
 add_subdirectory("modules/core")
 add_subdirectory("modules/asset")
 add_subdirectory("modules/screen")

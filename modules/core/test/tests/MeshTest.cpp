@@ -1,5 +1,5 @@
 #include "core/Mesh.h"
-#include "TestUtils.h"
+#include "test_utils/Utils.h"
 
 #include "glm/geometric.hpp"
 #include "gtest/gtest.h"

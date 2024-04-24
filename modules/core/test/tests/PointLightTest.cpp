@@ -5,7 +5,8 @@
 #include "core/Material.h"
 #include "core/Shape.h"
 
-#include "TestUtils.h"
+#include "core/TestUtils.h"
+#include "test_utils/Utils.h"
 
 #include <cmath>
 #include <expected>

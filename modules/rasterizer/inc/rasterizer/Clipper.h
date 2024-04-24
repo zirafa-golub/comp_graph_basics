@@ -50,7 +50,7 @@ private:
     void initForMesh(const MeshData& mesh);
     void cleanUp();
     void populateVertexFrustumInfo();
-    void clipTriangle(const MeshData::TriangleIndices& triangle);
+    void clipTriangle(const TriangleIndices& triangle);
     unsigned copyVertexIfNeeded(unsigned inputVertexIndex);
     unsigned addVertex(const Point& vertex);
 
@@ -63,6 +63,6 @@ private:
     std::vector<unsigned> copiedVertexIndex_;
 
     std::vector<Point> outputVertices_;
-    std::vector<MeshData::TriangleIndices> outputTriangles_;
+    std::vector<TriangleIndices> outputTriangles_;
 };
 } // namespace cg

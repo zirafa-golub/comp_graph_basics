@@ -6,7 +6,8 @@
 
 #include "glm/vec3.hpp"
 
-#include "TestUtils.h"
+#include "core/TestUtils.h"
+#include "test_utils/Utils.h"
 
 #include <cmath>
 #include <expected>

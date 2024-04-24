@@ -2,7 +2,7 @@
 
 #include "core/Color.h"
 
-#include "TestUtils.h"
+#include "core/TestUtils.h"
 
 using namespace cg;
 

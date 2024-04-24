@@ -16,7 +16,7 @@ file(GLOB_RECURSE rasterizer_test_includes "test/*.h")
 
 target_sources(rasterizer_test PRIVATE ${rasterizer_test_sources} ${rasterizer_test_includes})
 target_include_directories(rasterizer_test PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/test>")
-target_link_libraries(rasterizer_test PRIVATE rasterizer gtest_main)
+target_link_libraries(rasterizer_test PRIVATE rasterizer test_utils gtest_main)
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}/test" FILES ${rasterizer_test_sources})
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}/test" FILES ${rasterizer_test_includes})
 

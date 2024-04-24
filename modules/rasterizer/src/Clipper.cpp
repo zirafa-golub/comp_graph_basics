@@ -141,10 +141,10 @@ bool FrustumIntersect::isBelowPlanes(const Point& vertex, Planes planesToCheck) 
 Clipper::Clipper(const FrustumIntersect& frustum) : frustum_(frustum), inputMesh_(nullptr) {}
 
 void Clipper::initForMesh(const MeshData& mesh) {
-    planesBelowVertex_.resize(mesh.vertices().size(), FrustumIntersect::NoPlanes);
-    copiedVertexIndex_.resize(mesh.vertices().size(), notCopiedIndex);
-
     size_t vertexCount = mesh.vertices().size();
+    planesBelowVertex_.resize(vertexCount, FrustumIntersect::NoPlanes);
+    copiedVertexIndex_.resize(vertexCount, notCopiedIndex);
+
     outputVertices_.reserve(vertexCount);
     outputTriangles_.reserve(mesh.triangles().size());
     inputMesh_ = &mesh;
@@ -176,14 +176,14 @@ void Clipper::populateVertexFrustumInfo() {
     }
 }
 
-void Clipper::clipTriangle(const MeshData::TriangleIndices& triangle) {
+void Clipper::clipTriangle(const TriangleIndices& triangle) {
     const auto& vertices = inputMesh_->vertices();
     FrustumIntersect::Planes verticesOutsideFrustum = (planesBelowVertex_[triangle[0]] != FrustumIntersect::NoPlanes) +
                                                       (planesBelowVertex_[triangle[1]] != FrustumIntersect::NoPlanes) +
                                                       (planesBelowVertex_[triangle[2]] != FrustumIntersect::NoPlanes);
     if (verticesOutsideFrustum == 0) {
         // Triangle is fully inside frustum - put in output without changes
-        MeshData::TriangleIndices updatedTriangle;
+        TriangleIndices updatedTriangle;
         for (int i = 0; i < triangle.size(); ++i) {
             updatedTriangle[i] = copyVertexIfNeeded(triangle[i]);
         }

@@ -15,7 +15,7 @@ class BackFaceCuller {
 public:
     BackFaceCuller(const Point& cameraPosition) : cameraPosition_(cameraPosition) {}
 
-    bool shouldCull(const std::vector<Point>& points, const MeshData::TriangleIndices& triangle) {
+    bool shouldCull(const std::vector<Point>& points, const TriangleIndices& triangle) {
         glm::vec3 faceNormal =
             glm::cross(points[triangle[1]] - points[triangle[0]], points[triangle[2]] - points[triangle[0]]);
         return shouldCull(points[triangle[0]], faceNormal);

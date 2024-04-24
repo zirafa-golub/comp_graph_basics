@@ -1,7 +1,8 @@
 #include "gtest/gtest.h"
 
 #include "core/Camera.h"
-#include "TestUtils.h"
+#include "core/TestUtils.h"
+#include "test_utils/Utils.h"
 
 using namespace cg;
 

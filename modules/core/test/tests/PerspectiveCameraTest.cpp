@@ -1,7 +1,7 @@
 #include "gtest/gtest.h"
 
 #include "core/PerspectiveCamera.h"
-#include "TestUtils.h"
+#include "test_utils/Utils.h"
 
 #include <cmath>
 

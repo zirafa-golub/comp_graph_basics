@@ -2,7 +2,7 @@
 
 #include "glm/ext/matrix_transform.hpp"
 #include "gtest/gtest.h"
-#include "TestUtils.h"
+#include "test_utils/Utils.h"
 
 #include <numbers>
 

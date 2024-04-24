@@ -2,7 +2,7 @@
 
 #include "core/BlinnPhong.h"
 
-#include "TestUtils.h"
+#include "core/TestUtils.h"
 
 #include "glm/geometric.hpp"
 

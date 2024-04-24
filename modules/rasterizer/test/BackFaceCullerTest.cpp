@@ -37,7 +37,7 @@ TEST(BackFaceCullerTest, shouldCullFaceNormal_rightAngle_shouldReturnTrue) {
 
 TEST(BackFaceCullerTest, shouldCullTriangle_facedAway_shouldReturnTrue) {
     std::vector<Point> vertices = {{3.0f, -1.0f, 5.0f}, {3.0f, 2.0f, 5.0f}, {-2.0f, -1.0f, 6.0}};
-    MeshData::TriangleIndices triangle = {0, 1, 2};
+    TriangleIndices triangle = {0, 1, 2};
     glm::vec3 cameraPosition = {1, 0, 0};
     BackFaceCuller bfc(cameraPosition);
 
@@ -46,7 +46,7 @@ TEST(BackFaceCullerTest, shouldCullTriangle_facedAway_shouldReturnTrue) {
 
 TEST(BackFaceCullerTest, shouldCullTriangle_facedTowards_shouldReturnFalse) {
     std::vector<Point> vertices = {{3.0f, -1.0f, 5.0f}, {-2.0f, -1.0f, 6.0}, {3.0f, 2.0f, 5.0f}};
-    MeshData::TriangleIndices triangle = {0, 1, 2};
+    TriangleIndices triangle = {0, 1, 2};
     glm::vec3 cameraPosition = {1, 0, 0};
     BackFaceCuller bfc(cameraPosition);
 
@@ -55,7 +55,7 @@ TEST(BackFaceCullerTest, shouldCullTriangle_facedTowards_shouldReturnFalse) {
 
 TEST(BackFaceCullerTest, shouldCullTriangle_rightAngle_shouldReturnTrue) {
     std::vector<Point> vertices = {{1.0f, -1.0f, 5.0f}, {1.0f, -1.0f, 6.0}, {1.0f, 2.0f, 5.0f}};
-    MeshData::TriangleIndices triangle = {0, 1, 2};
+    TriangleIndices triangle = {0, 1, 2};
     glm::vec3 cameraPosition = {1, 0, 0};
     BackFaceCuller bfc(cameraPosition);
 
