@@ -1,7 +1,7 @@
 add_library(screen STATIC)
 
-file(GLOB screen_sources "src/*.cpp")
-file(GLOB screen_includes "inc/*.h")
+file(GLOB_RECURSE screen_sources "src/*.cpp")
+file(GLOB_RECURSE screen_includes "inc/*.h")
 
 target_sources(screen PRIVATE ${screen_sources} ${screen_includes})
 target_include_directories(screen PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc>")

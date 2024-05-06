@@ -3,6 +3,7 @@
 #include "common/Error.h"
 #include "common/MemUtils.h"
 #include "core/Color.h"
+#include "screen/Screen.h"
 
 #include "SDL.h"
 
@@ -18,7 +19,7 @@ public:
     public:
         Painter(int width, int height, int rowSize, void* pixelData)
             : width_(width), height_(height), rowSize_(rowSize), pixelData_(pixelData) {}
-        void paintPixel(unsigned row, unsigned col, const Color& color) {
+        void paintPixel(int row, int col, const Color& color) {
             uint32_t int32Color = colorToIntArgb(color).asUint32();
 
             uint32_t* destination = reinterpret_cast<uint32_t*>(static_cast<uint8_t*>(pixelData_) +
@@ -28,11 +29,17 @@ public:
             *destination = int32Color;
         }
 
+        int width() { return width_; }
+        int height() { return height_; }
+
+    private:
         int width_;
         int height_;
         int rowSize_;
         void* pixelData_;
     };
+
+    static_assert(PixelPainter<Painter>, "SdlScreen::Painter does not fulfil the PixelPainter concept.");
 
     SdlScreen(SdlScreen&&) = default;
     SdlScreen& operator=(SdlScreen&&) = default;
@@ -81,4 +88,6 @@ private:
     int rowSize_;
     void* pixelData_;
 };
+
+static_assert(Screen<SdlScreen>, "SdlScreen does not fulfil the Screen concept.");
 } // namespace cg

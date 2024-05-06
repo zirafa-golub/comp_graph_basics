@@ -2,6 +2,7 @@
 
 #include "core/Angle.h"
 
+#include "glm/vec2.hpp"
 #include "glm/vec3.hpp"
 
 #include <vector>
@@ -9,7 +10,7 @@
 namespace cg {
 
 using Point = glm::vec3;
-using Position = glm::vec3;
+using Point2d = glm::vec2;
 using TriangleIndices = std::array<unsigned, 3>;
 
 struct Size2d {
