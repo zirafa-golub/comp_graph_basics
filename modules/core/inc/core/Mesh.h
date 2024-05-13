@@ -1,5 +1,6 @@
 #pragma once
 
+#include "core/MeshData.h"
 #include "core/Shape.h"
 
 #include <array>
@@ -14,8 +15,6 @@ public:
         float gamma;
     };
 
-    using TriangleIndices = std::array<unsigned, 3>;
-
     Mesh(MeshData meshData);
 
     std::expected<HitDesc, Error> hit(const Ray& ray, float tMin, float tMax) const override;
@@ -24,7 +23,11 @@ public:
                                                              const Point& vertexC);
     const MeshData& meshData() const override;
 
+protected:
+    void transformUpdated() override;
+
 private:
     MeshData meshData_;
+    glm::mat3 transposedLocalFrame_;
 };
 } // namespace cg

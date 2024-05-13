@@ -1,7 +1,8 @@
 #pragma once
 
-#include "BasicTypes.h"
-#include "Shape.h"
+#include "core/BasicTypes.h"
+#include "core/MeshData.h"
+#include "core/Shape.h"
 
 #include "glm/mat4x4.hpp"
 
@@ -13,7 +14,7 @@ namespace cg {
 class Angle;
 class Sphere : public Shape {
 public:
-    Sphere(float radius) : radius_(radius) {}
+    Sphere(float radius);
 
     const Point& center() const;
 

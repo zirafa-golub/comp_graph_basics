@@ -86,8 +86,11 @@ int main(int argc, char* argv[]) {
                                         {floorLength / 2, 0, floorWidth / 2},
                                         {-floorLength / 2, 0, floorWidth / 2},
                                         {-floorLength / 2, 0, -floorWidth / 2}};
-    std::vector<Mesh::TriangleIndices> floorTriangles = {{0, 3, 2}, {0, 2, 1}};
-    std::unique_ptr<Mesh> floor = std::make_unique<Mesh>(MeshData(std::move(floorVertices), std::move(floorTriangles)));
+    std::vector<Point> floorNormals = {{0, 1, 0}};
+    std::vector<TriangleData> floorTriangles = {MeshData::createTriangle(0, 3, 2, 0),
+                                                MeshData::createTriangle(0, 2, 1, 0)};
+    std::unique_ptr<Mesh> floor =
+        std::make_unique<Mesh>(MeshData(std::move(floorVertices), std::move(floorNormals), std::move(floorTriangles)));
     floor->setPosition(Point(0, floorHeight, 0));
     floor->setMaterial(std::make_unique<BlinnPhong>(0.5f * Color::white(), Color::black(), 1, 0.3f * Color::white()));
     floor->update();

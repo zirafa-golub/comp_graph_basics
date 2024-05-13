@@ -11,13 +11,18 @@
 namespace cg {
 class PlaneIntersect {
 public:
+    struct SegmentIntersection {
+        Point intersection;
+        float fromFirstToSecond;
+    };
+
     PlaneIntersect(const Point& a, const Point& b, const Point& c)
         : planePoint_(a), normal_(glm::normalize(glm::cross(b - a, c - a))),
           constant_(-glm::dot(planePoint_, normal_)) {}
 
     bool isVertexAbove(const Point& p) const { return glm::dot(p, normal_) + constant_ > 0; }
 
-    std::optional<Point> intersectSegment(const Point& a, const Point& b) const {
+    std::optional<SegmentIntersection> intersectSegment(const Point& a, const Point& b) const {
         float divisor = glm::dot(a - b, normal_);
         if (divisor == 0) {
             return std::nullopt;
@@ -26,7 +31,7 @@ public:
         if (intersection < 0.0f || intersection > 1.0f) {
             return std::nullopt;
         }
-        return a + intersection * (b - a);
+        return SegmentIntersection(a + intersection * (b - a), intersection);
     }
 
 private:

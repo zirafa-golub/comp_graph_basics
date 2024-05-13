@@ -23,8 +23,14 @@ std::expected<Mesh, Error> MeshLoader::load(std::filesystem::path path) {
         vertices.push_back(Point(attributes.vertices[i], attributes.vertices[i + 1], attributes.vertices[i + 2]));
     }
 
+    std::vector<glm::vec3> vertexNormals;
+    for (unsigned i = 0; i < attributes.normals.size(); i += 3) {
+        vertexNormals.push_back(
+            glm::normalize(glm::vec3(attributes.normals[i], attributes.normals[i + 1], attributes.normals[i + 2])));
+    }
+
     const shape_t& shape = reader.GetShapes()[0];
-    std::vector<Mesh::TriangleIndices> indices;
+    std::vector<TriangleData> triangleData;
     for (unsigned i = 0; i < shape.mesh.indices.size(); i += 3) {
         const index_t& index0 = shape.mesh.indices[i];
         const index_t& index1 = shape.mesh.indices[i + 1];
@@ -33,11 +39,11 @@ std::expected<Mesh, Error> MeshLoader::load(std::filesystem::path path) {
         assert(index1.vertex_index >= 0);
         assert(index2.vertex_index >= 0);
 
-        indices.push_back(Mesh::TriangleIndices{static_cast<unsigned>(index0.vertex_index),
-                                                static_cast<unsigned>(index1.vertex_index),
-                                                static_cast<unsigned>(index2.vertex_index)});
+        triangleData.push_back(MeshData::createTriangle({index0.vertex_index, index0.normal_index},
+                                                        {index1.vertex_index, index1.normal_index},
+                                                        {index2.vertex_index, index2.normal_index}));
     }
 
-    return Mesh(MeshData(std::move(vertices), std::move(indices)));
+    return Mesh(MeshData(std::move(vertices), std::move(vertexNormals), std::move(triangleData)));
 }
 } // namespace cg

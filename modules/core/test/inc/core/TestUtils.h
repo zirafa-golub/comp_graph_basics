@@ -21,7 +21,7 @@ public:
     const cg::MeshData& meshData() const override;
 
 private:
-    cg::MeshData meshData_ = cg::MeshData({}, {});
+    cg::MeshData meshData_ = cg::MeshData({}, {}, {});
 };
 
 class PerfectMirrorMaterial : public cg::Material {

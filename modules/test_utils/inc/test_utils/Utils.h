@@ -4,6 +4,7 @@
 #include "glm/vec3.hpp"
 #include "gtest/gtest.h"
 
+#include <ostream>
 #include <span>
 
 template <typename T, size_t Extent1, size_t Extent2>
@@ -15,3 +16,8 @@ void assertVec3FloatEqual(const glm::vec3& left, const glm::vec3& right);
 void assertVec4FloatEqual(const glm::vec4& left, const glm::vec4& right);
 void assertMat4FloatEqual(const glm::mat4& left, const glm::mat4& right);
 void assertMat4EqualTolerance(const glm::mat4& left, const glm::mat4& right, float tolerance = 1e-7f);
+
+// Print function for glm::vec3 for gtest
+namespace glm {
+std::ostream& operator<<(std::ostream& os, const glm::vec3& vec);
+} // namespace glm

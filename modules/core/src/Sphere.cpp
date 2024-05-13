@@ -9,6 +9,8 @@
 using namespace cg::angle_literals;
 
 namespace cg {
+Sphere::Sphere(float radius) : radius_(radius), transposedLocalFrame_(glm::transpose(toLocalFrameMatrix())) {}
+
 const Point& Sphere::center() const { return position(); }
 
 float Sphere::radius() const { return radius_; }
@@ -70,15 +72,18 @@ void Sphere::generateMesh(unsigned verticalSegCount, unsigned horizontalSegCount
     Angle horizontalStep = 360_deg / horizontalSegCount;
 
     std::vector<Point> vertices;
-    std::vector<Mesh::TriangleIndices> triangles;
+    std::vector<glm::vec3> vertexNormals;
+    std::vector<TriangleData> triangles;
 
     // Generate "upper cap"
     vertices.push_back(generatePoint(0_deg, 0_deg));
+    vertexNormals.push_back(glm::normalize(vertices.back()));
     for (unsigned hor = 0; hor < horizontalSegCount; ++hor) {
         vertices.push_back(generatePoint(verticalStep, hor * horizontalStep));
+        vertexNormals.push_back(glm::normalize(vertices.back()));
     }
     for (unsigned hor = 0; hor < horizontalSegCount; ++hor) {
-        triangles.push_back(Mesh::TriangleIndices({hor, (hor + 1) % horizontalSegCount, 0}));
+        triangles.push_back(MeshData::createTriangle(hor, (hor + 1) % horizontalSegCount, 0));
     }
 
     // Generate mid part
@@ -87,26 +92,28 @@ void Sphere::generateMesh(unsigned verticalSegCount, unsigned horizontalSegCount
         unsigned segStart = static_cast<unsigned>(vertices.size());
         for (unsigned hor = 0; hor < horizontalSegCount; ++hor) {
             vertices.push_back(generatePoint(verticalAngle, hor * horizontalStep));
+            vertexNormals.push_back(glm::normalize(vertices.back()));
         }
         for (unsigned hor = 0; hor < horizontalSegCount; ++hor) {
             unsigned currVer = segStart + hor;
             unsigned nextVer = segStart + ((hor + 1) % horizontalSegCount);
-            triangles.push_back(Mesh::TriangleIndices({currVer, nextVer, currVer - horizontalSegCount}));
+            triangles.push_back(MeshData::createTriangle(currVer, nextVer, currVer - horizontalSegCount));
             triangles.push_back(
-                Mesh::TriangleIndices({nextVer, nextVer - horizontalSegCount, currVer - horizontalSegCount}));
+                MeshData::createTriangle(nextVer, nextVer - horizontalSegCount, currVer - horizontalSegCount));
         }
     }
 
     // Generate "lower cap"
     unsigned segStart = static_cast<unsigned>(vertices.size() - horizontalSegCount);
     vertices.push_back(generatePoint(180_deg, 0_deg));
+    vertexNormals.push_back(glm::normalize(vertices.back()));
     unsigned lowerPolarVer = static_cast<unsigned>(vertices.size() - 1);
     for (unsigned hor = 0; hor < horizontalSegCount; ++hor) {
         triangles.push_back(
-            Mesh::TriangleIndices({segStart + hor, lowerPolarVer, segStart + ((hor + 1) % horizontalSegCount)}));
+            MeshData::createTriangle(segStart + hor, lowerPolarVer, segStart + ((hor + 1) % horizontalSegCount)));
     }
 
-    meshData_ = std::make_unique<MeshData>(std::move(vertices), std::move(triangles));
+    meshData_ = std::make_unique<MeshData>(std::move(vertices), std::move(vertexNormals), std::move(triangles));
 }
 
 Point Sphere::generatePoint(Angle verticalAngle, Angle horizontalAngle) const {

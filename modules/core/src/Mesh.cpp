@@ -6,7 +6,8 @@
 #include "glm/gtx/component_wise.hpp"
 
 namespace cg {
-Mesh::Mesh(MeshData meshData) : meshData_(std::move(meshData)) {}
+Mesh::Mesh(MeshData meshData)
+    : meshData_(std::move(meshData)), transposedLocalFrame_(glm::transpose(toLocalFrameMatrix())) {}
 
 std::expected<HitDesc, Error> Mesh::hit(const Ray& ray, float tMin, float tMax) const {
     float closestHit = std::numeric_limits<float>::max();
@@ -14,16 +15,24 @@ std::expected<HitDesc, Error> Mesh::hit(const Ray& ray, float tMin, float tMax) 
 
     const auto& triangles = meshData_.triangles();
     const auto& vertices = meshData_.vertices();
+    const auto& vertexNormals = meshData_.vertexNormals();
     const auto& toGlobalFrame = toGlobalFrameMatrix();
     for (const auto& triangle : triangles) {
-        glm::vec3 vertexA = toGlobalFrame * glm::vec4(vertices[triangle[0]], 1.0f);
-        glm::vec3 vertexB = toGlobalFrame * glm::vec4(vertices[triangle[1]], 1.0f);
-        glm::vec3 vertexC = toGlobalFrame * glm::vec4(vertices[triangle[2]], 1.0f);
+        glm::vec3 vertexA = toGlobalFrame * glm::vec4(vertices[triangle[0].vertex], 1.0f);
+        glm::vec3 vertexB = toGlobalFrame * glm::vec4(vertices[triangle[1].vertex], 1.0f);
+        glm::vec3 vertexC = toGlobalFrame * glm::vec4(vertices[triangle[2].vertex], 1.0f);
         auto triHitResult = hitTriangle(ray, tMin, tMax, vertexA, vertexB, vertexC);
 
         if (triHitResult.has_value()) {
-            closestHit = triHitResult.value().tHit;
-            unitNormal = glm::normalize(glm::cross(vertexB - vertexA, vertexC - vertexA));
+            const Mesh::TriangleHit& hit = triHitResult.value();
+            closestHit = hit.tHit;
+            float alpha = 1 - hit.beta - hit.gamma;
+            // To transform the normal vector to global frame, we need the transposed inverse of the to-global-frame
+            // transform which is transposed to-local-frame transform
+            unitNormal = glm::normalize(
+                alpha * glm::normalize(transposedLocalFrame_ * vertexNormals[triangle[0].vertexNormal]) +
+                hit.beta * glm::normalize(transposedLocalFrame_ * vertexNormals[triangle[1].vertexNormal]) +
+                hit.gamma * glm::normalize(transposedLocalFrame_ * vertexNormals[triangle[2].vertexNormal]));
             tMax = closestHit;
         }
     }
@@ -91,4 +100,6 @@ std::expected<Mesh::TriangleHit, ErrorCode> Mesh::hitTriangle(const Ray& ray, fl
 }
 
 const MeshData& Mesh::meshData() const { return meshData_; }
+
+void Mesh::transformUpdated() { transposedLocalFrame_ = glm::transpose(toLocalFrameMatrix()); }
 } // namespace cg

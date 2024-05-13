@@ -11,7 +11,6 @@ namespace cg {
 
 using Point = glm::vec3;
 using Point2d = glm::vec2;
-using TriangleIndices = std::array<unsigned, 3>;
 
 struct Size2d {
     float width;

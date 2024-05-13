@@ -28,7 +28,8 @@ public:
 
     FrustumIntersect(const PerspectiveCamera::FrustumPoints& frustum);
     Planes planesBelowVertex(const Point& vertex, Planes planesToCheck = AllPlanes) const;
-    std::optional<Point> findIntersectionPoint(const Point& v1, const Point& v2, Planes planesToCheck) const;
+    std::optional<PlaneIntersect::SegmentIntersection> findIntersectionPoint(const Point& v1, const Point& v2,
+                                                                             Planes planesToCheck) const;
 
 private:
     bool isBelowPlanes(const Point& vertex, Planes planesToCheck) const;
@@ -50,19 +51,23 @@ private:
     void initForMesh(const MeshData& mesh);
     void cleanUp();
     void populateVertexFrustumInfo();
-    void clipTriangle(const TriangleIndices& triangle);
-    unsigned copyVertexIfNeeded(unsigned inputVertexIndex);
-    unsigned addVertex(const Point& vertex);
+    void clipTriangle(const TriangleData& triangle);
 
-    static constexpr unsigned notCopiedIndex = std::numeric_limits<unsigned>::max();
+    VertexData copyVertexAndNormalIfNeeded(MeshData::Index inputVertexIndex, MeshData::Index inputVertexNormalIndex);
+    VertexData addVertexAndNormal(const Point& vertex, const glm::vec3& vertexNormal);
+    glm::vec3 interpolateNormal(const glm::vec3& start, const glm::vec3& end, float fromFirstToSecond);
+
+    static constexpr MeshData::Index notCopiedIndex = -1;
 
     const FrustumIntersect& frustum_;
 
     const MeshData* inputMesh_;
     std::vector<FrustumIntersect::Planes> planesBelowVertex_;
-    std::vector<unsigned> copiedVertexIndex_;
+    std::vector<MeshData::Index> copiedVertexIndex_;
+    std::vector<MeshData::Index> copiedVertexNormalIndex_;
 
     std::vector<Point> outputVertices_;
-    std::vector<TriangleIndices> outputTriangles_;
+    std::vector<glm::vec3> outputVertexNormals_;
+    std::vector<TriangleData> outputTriangles_;
 };
 } // namespace cg

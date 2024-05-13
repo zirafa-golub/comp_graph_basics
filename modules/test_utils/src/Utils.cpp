@@ -28,3 +28,10 @@ void assertMat4EqualTolerance(const glm::mat4& left, const glm::mat4& right, flo
         }
     }
 }
+
+namespace glm {
+std::ostream& operator<<(std::ostream& os, const glm::vec3& vec) {
+    os << "x: " << vec.x << ", y: " << vec.y << ", z: " << vec.z;
+    return os;
+}
+} // namespace glm

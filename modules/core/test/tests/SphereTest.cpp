@@ -124,7 +124,7 @@ TEST(SphereTest, generateMesh_validInput_shouldGenerateCorrectMesh) {
                                            {-0.70710665, -1.41421354, 1.22474492},
                                            {0.70710665, -1.41421354, 1.22474492},
                                            {0, -2, 0}};
-    std::vector<TriangleIndices> expectedTriangles = {
+    std::vector<std::array<MeshData::Index, 3>> expectedTriangleIndices = {
         {0, 1, 0},    {1, 2, 0},    {2, 3, 0},    {3, 4, 0},    {4, 5, 0},    {5, 0, 0},   {7, 8, 1},    {8, 2, 1},
         {8, 9, 2},    {9, 3, 2},    {9, 10, 3},   {10, 4, 3},   {10, 11, 4},  {11, 5, 4},  {11, 12, 5},  {12, 6, 5},
         {12, 7, 6},   {7, 1, 6},    {13, 14, 7},  {14, 8, 7},   {14, 15, 8},  {15, 9, 8},  {15, 16, 9},  {16, 10, 9},
@@ -138,10 +138,10 @@ TEST(SphereTest, generateMesh_validInput_shouldGenerateCorrectMesh) {
     for (const Point& point : mesh.vertices()) {
         EXPECT_FLOAT_EQ(glm::length(point), sphere.radius());
     }
-    for (const TriangleIndices& triangle : mesh.triangles()) {
-        for (unsigned vertexIndex : triangle) {
-            EXPECT_GE(vertexIndex, 0);
-            EXPECT_LT(vertexIndex, mesh.vertices().size());
+    for (const TriangleData& triangle : mesh.triangles()) {
+        for (VertexData vertexData : triangle) {
+            EXPECT_GE(vertexData.vertex, 0);
+            EXPECT_LT(vertexData.vertex, mesh.vertices().size());
         }
     }
 
@@ -150,8 +150,15 @@ TEST(SphereTest, generateMesh_validInput_shouldGenerateCorrectMesh) {
             EXPECT_NEAR(mesh.vertices()[i][j], expectedVertices[i][j], 0.000001f);
         }
     }
+    for (size_t i = 0; i < mesh.vertices().size(); ++i) {
+        EXPECT_NEAR(glm::length(mesh.vertexNormals()[i]), 1.0f, 0.000001f);
+        EXPECT_FLOAT_EQ(glm::dot(mesh.vertexNormals()[i], mesh.vertices()[i]),
+                        glm::length(mesh.vertexNormals()[i]) * glm::length(mesh.vertices()[i]));
+    }
     for (size_t i = 0; i < mesh.triangles().size(); ++i) {
-        EXPECT_EQ(mesh.triangles()[i], expectedTriangles[i]);
+        for (int j = 0; j < 3; ++j) {
+            EXPECT_EQ(mesh.triangles()[i][j], VertexData(expectedTriangleIndices[i][j], expectedTriangleIndices[i][j]));
+        }
     }
 }
 
