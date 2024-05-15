@@ -17,6 +17,27 @@ Ray OrthogonalCamera::castRay(unsigned pixelX, unsigned pixelY) const {
     return Ray(position() + offsetHor * rightVector() + offsetVer * upVector(), viewDirection());
 }
 
+Camera::FrustumPoints OrthogonalCamera::frustumPoints() const {
+    FrustumPoints frustum;
+
+    const glm::vec3& cameraPos = position();
+    glm::vec3 toNearPlane = viewDirection() * viewPlaneDistance();
+    glm::vec3 toFarPlane = viewDirection() * viewLimit();
+    glm::vec3 rightOffset = rightVector() * (viewPlaneSize().width / 2);
+    glm::vec3 upOffset = upVector() * (viewPlaneSize().height / 2);
+
+    frustum.nlb = cameraPos + toNearPlane - rightOffset - upOffset;
+    frustum.nlt = cameraPos + toNearPlane - rightOffset + upOffset;
+    frustum.nrb = cameraPos + toNearPlane + rightOffset - upOffset;
+    frustum.nrt = cameraPos + toNearPlane + rightOffset + upOffset;
+    frustum.flb = cameraPos + toFarPlane - rightOffset - upOffset;
+    frustum.flt = cameraPos + toFarPlane - rightOffset + upOffset;
+    frustum.frb = cameraPos + toFarPlane + rightOffset - upOffset;
+    frustum.frt = cameraPos + toFarPlane + rightOffset + upOffset;
+
+    return frustum;
+}
+
 const glm::mat4& OrthogonalCamera::projectionTransform() const { return projectionTransform_; }
 
 void OrthogonalCamera::onUpdated() {

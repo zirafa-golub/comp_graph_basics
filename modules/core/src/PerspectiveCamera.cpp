@@ -18,7 +18,7 @@ void PerspectiveCamera::setFieldOfView(Angle fov) {
     setViewPlaneWidth(newWidth);
 }
 
-PerspectiveCamera::FrustumPoints PerspectiveCamera::frustumPoints() const {
+Camera::FrustumPoints PerspectiveCamera::frustumPoints() const {
     FrustumPoints frustum;
 
     const glm::vec3& cameraPos = position();

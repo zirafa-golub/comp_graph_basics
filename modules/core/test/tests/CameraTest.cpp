@@ -10,6 +10,7 @@ struct TestCamera : public Camera {
     Ray castRay(unsigned pixelX, unsigned pixelY) const override { return Ray({0, 0, 0}, {0, 0, 1}); }
     const glm::vec3& rightVector() { return Camera::rightVector(); }
     const glm::mat4& projectionTransform() const override { return projectionMatrix_; }
+    FrustumPoints frustumPoints() const override { return FrustumPoints{}; }
 
     unsigned onUpdatedCallCount = 0;
     glm::mat4 projectionMatrix_ = glm::identity<glm::mat4>();

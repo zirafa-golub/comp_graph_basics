@@ -20,6 +20,24 @@ public:
         bool operator!=(const Resolution&) const = default;
     };
 
+    struct FrustumPoints {
+        /*  n -> near (view plane distance)
+         *  f -> far (view limit)
+         *  l -> left
+         *  r -> right
+         *  t -> top
+         *  b -> bottom
+         */
+        Point nlb;
+        Point nrb;
+        Point nlt;
+        Point nrt;
+        Point flb;
+        Point frb;
+        Point flt;
+        Point frt;
+    };
+
     Camera();
     virtual ~Camera() = default;
     Camera(Camera&&) = default;
@@ -28,6 +46,8 @@ public:
     Camera& operator=(const Camera&) = default;
 
     virtual Ray castRay(unsigned pixelX, unsigned pixelY) const = 0;
+
+    virtual FrustumPoints frustumPoints() const = 0;
 
     // View vectors modifiers
     const glm::vec3& viewDirection() const;
