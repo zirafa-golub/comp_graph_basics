@@ -1,4 +1,5 @@
 #include "ray_tracer/RayTraceRenderer.h"
+#include "ray_tracer/RayTracerShaders.h"
 
 #include <limits>
 
@@ -6,7 +7,14 @@
 
 namespace cg {
 
-void RayTraceRenderer::renderScene(const Scene& scene, SdlScreen& screen) {
+void RayTraceRenderer::renderScene(Scene& scene, SdlScreen& screen) {
+    sceneShapes_ = scene.shapes();
+
+    for (auto shape : sceneShapes_) {
+        RayTracerShaders& shaderGroup = static_cast<RayTracerShaders&>(shape->shaderGroup());
+        shaderGroup.hitDetector().initForFrame();
+    }
+
     const Camera& camera = scene.camera();
     auto res = camera.resolution();
     SdlScreen::Painter painter = screen.paintPixels();
@@ -19,23 +27,23 @@ void RayTraceRenderer::renderScene(const Scene& scene, SdlScreen& screen) {
     }
 }
 
-Color RayTraceRenderer::shadeRay(const Scene& scene, const Ray& ray, unsigned currBounceCount) {
+Color RayTraceRenderer::shadeRay(Scene& scene, const Ray& ray, unsigned currBounceCount) {
     Color pixelColor = Color(0, 0, 0);
-    auto result = scene.hit(ray, 0, std::numeric_limits<float>::infinity());
+    auto result = hitScene(ray, 0, std::numeric_limits<float>::infinity());
     if (result.has_value()) {
         const HitDesc& hit = result.value();
-        Point hitPoint = hit.ray.evaluate(hit.tHit);
+        Point hitPoint = hit.ray.evaluate(hit.rayHitVal);
 
         // Compute direct illumination from lights while checking if the spot is in a shadow
         for (const auto& light : scene.lights()) {
             Light::DistanceDesc lightDistance = light->distanceFrom(hitPoint);
             Ray rayToLight(hitPoint + raySurfaceOffset * hit.unitNormal, lightDistance.unitDirection);
 
-            auto shadowResult = scene.hit(rayToLight, 0, lightDistance.distance);
+            auto shadowResult = hitScene(rayToLight, 0, lightDistance.distance);
             if (!shadowResult.has_value()) {
                 Color reflectedLight = hit.hitShape->material().reflect(hit.unitNormal, hit.unitViewDirection,
                                                                         lightDistance.unitDirection);
-                pixelColor += reflectedLight * light->illuminate(hit);
+                pixelColor += reflectedLight * light->illuminate(hitPoint, hit.unitNormal);
             }
         }
 
@@ -51,6 +59,20 @@ Color RayTraceRenderer::shadeRay(const Scene& scene, const Ray& ray, unsigned cu
         pixelColor += scene.ambientLight() * hit.hitShape->ambientReflectance();
     }
     return pixelColor;
+}
+
+std::optional<HitDesc> RayTraceRenderer::hitScene(const Ray& ray, float rayMin, float rayMax) {
+    std::optional<HitDesc> result = std::nullopt;
+    for (auto shape : sceneShapes_) {
+        RayTracerShaders& shaderGroup = static_cast<RayTracerShaders&>(shape->shaderGroup());
+        auto hitResult = shaderGroup.hitDetector().hit(ray, rayMin, rayMax);
+        if (hitResult.has_value()) {
+            result = std::move(hitResult);
+            rayMax = result.value().rayHitVal;
+        }
+    }
+
+    return result;
 }
 
 unsigned RayTraceRenderer::maxBounces() const { return maxBounces_; }

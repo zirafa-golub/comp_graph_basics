@@ -14,7 +14,7 @@ struct Light {
     };
 
     virtual ~Light() = default;
-    virtual Color illuminate(const HitDesc& pointDesc) const = 0;
+    virtual Color illuminate(const Point& illuminatedPoint, const glm::vec3& unitNormal) const = 0;
     virtual DistanceDesc distanceFrom(const Point& point) const = 0;
 };
 } // namespace cg

@@ -12,7 +12,7 @@ public:
     const Color& intensity();
     void setIntensity(const Color& intensity);
 
-    Color illuminate(const HitDesc& pointDesc) const override;
+    Color illuminate(const Point& illuminatedPoint, const glm::vec3& unitNormal) const override;
     DistanceDesc distanceFrom(const Point& point) const override;
 
 private:

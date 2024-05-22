@@ -23,28 +23,16 @@ TEST(DirectionalLightTest, constructor_shouldNormalizeDirection) {
 }
 
 TEST(DirectionalLightTest, illuminate_validLightAngle_shouldReturnExpected) {
-    UnhittableShape shape;
-    shape.setMaterial(std::make_unique<PerfectMirrorMaterial>());
-
     DirectionalLight light({0, -1, 0}, Color(8.0f, 4.0f, 2.0f));
 
-    Ray hitRay{{2, 2, 0}, {-2, -1, 0}};
-    HitDesc hit = {&shape, hitRay, 1.0f, {std::sqrt(3) / 2, 0.5f, 0}};
-
-    Color reflectedLight = light.illuminate(hit);
+    Color reflectedLight = light.illuminate({0, 1, 0}, {std::sqrt(3) / 2, 0.5f, 0});
     assertColorsFloatEqual(reflectedLight, Color(4.0f, 2.0f, 1.0f));
 }
 
 TEST(DirectionalLightTest, illuminate_invalidLightAngle_shouldReturnZero) {
-    UnhittableShape shape;
-    shape.setMaterial(std::make_unique<PerfectMirrorMaterial>());
-
     DirectionalLight light({-1, 0, 0}, Color(8.0f, 4.0f, 2.0f));
 
-    Ray hitRay{{2, 2, 0}, {-2, -1, 0}};
-    HitDesc hit = {&shape, hitRay, 1.0f, {0, 1.0f, 0}};
-
-    Color reflectedLight = light.illuminate(hit);
+    Color reflectedLight = light.illuminate({0, 1, 0}, {0, 1, 0});
     assertColorsFloatEqual(reflectedLight, Color(0.0f, 0.0f, 0.0f));
 }
 

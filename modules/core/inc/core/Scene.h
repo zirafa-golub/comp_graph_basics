@@ -26,8 +26,6 @@ public:
     const Color& ambientLight() const;
     void setAmbientLight(const Color& newAmbient);
 
-    std::expected<HitDesc, Error> hit(const Ray& ray, float tMin, float tMax) const;
-
 private:
     std::vector<std::unique_ptr<Shape>> shapes_;
     std::vector<std::unique_ptr<Light>> lights_;

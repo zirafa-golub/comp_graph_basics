@@ -1,36 +1,21 @@
 #pragma once
 
-#include "common/Error.h"
 #include "core/BasicTypes.h"
 #include "core/Color.h"
 #include "core/Material.h"
 #include "core/MeshData.h"
-#include "core/Ray.h"
+#include "core/ShaderGroup.h"
 #include "core/Transformable.h"
 
-#include "glm/geometric.hpp"
-
-#include <expected>
+#include <algorithm>
+#include <cassert>
 #include <memory>
+#include <vector>
 
 namespace cg {
-class Shape;
-
-struct HitDesc {
-    const Shape* hitShape;
-    Ray ray;
-    float tHit;
-    glm::vec3 unitNormal;
-    glm::vec3 unitViewDirection;
-
-    HitDesc(const Shape* hitShape_, const Ray& ray_, float tHit_, const glm::vec3& unitNormal_)
-        : hitShape(hitShape_), ray(ray_), tHit(tHit_), unitNormal(unitNormal_),
-          unitViewDirection(glm::normalize(-ray.direction())) {}
-};
 
 class Shape : public Transformable {
 public:
-    virtual std::expected<HitDesc, Error> hit(const Ray& ray, float tMin, float tMax) const = 0;
     virtual const MeshData& meshData() const = 0;
 
     const Material& material() const { return *material_; }
@@ -40,8 +25,27 @@ public:
     const Color& ambientReflectance() const { return ambientReflectance_; }
     void setAmbientReflectance(const Color& newReflectance) { ambientReflectance_ = newReflectance; }
 
+    const ShaderGroup& shaderGroup() const {
+        assert(shaderGroup_ != nullptr);
+        return *shaderGroup_;
+    }
+    ShaderGroup& shaderGroup() {
+        assert(shaderGroup_ != nullptr);
+        return *shaderGroup_;
+    }
+    void setShaderGroup(std::unique_ptr<ShaderGroup>&& shaderGroup) {
+        assert(shaderGroup != nullptr);
+
+        shaderGroup->setShape(*this);
+        shaderGroup_ = std::move(shaderGroup);
+    }
+
+protected:
+    Shape() = default;
+
 private:
     std::unique_ptr<Material> material_;
     Color ambientReflectance_ = Color(1, 1, 1);
+    std::unique_ptr<ShaderGroup> shaderGroup_;
 };
 } // namespace cg

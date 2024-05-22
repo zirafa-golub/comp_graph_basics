@@ -9,7 +9,9 @@
 #include "core/Scene.h"
 #include "core/Sphere.h"
 #include "ray_tracer/RayTraceRenderer.h"
+#include "RayTracerShaderFactory.h"
 #include "screen/SdlScreen.h"
+#include "ShapeFactory.h"
 
 #include "SDL2/SDL.h"
 
@@ -60,20 +62,22 @@ int main(int argc, char* argv[]) {
     std::unique_ptr<PointLight> pointLight2 = std::make_unique<PointLight>(100 * Color::white());
     pointLight2->setPosition(Point(-4, 4, -8));
 
-    std::unique_ptr<Sphere> sphere1 = std::make_unique<Sphere>(2.0f);
+    std::unique_ptr<ShaderGroupFactory> shaderFactory = std::make_unique<RayTracerShaderFactory>();
+
+    std::unique_ptr<Sphere> sphere1 = ShapeFactory::createSphere(*shaderFactory, 2.0f);
     sphere1->setPosition(Point(10, 0, -3));
     sphere1->setAmbientReflectance(Color::red());
     sphere1->setMaterial(std::make_unique<BlinnPhong>(Color::red(), 0.4f * Color::white(), 32, 0.3f * Color::white()));
     sphere1->update();
 
-    std::unique_ptr<Sphere> sphere2 = std::make_unique<Sphere>(1.0f);
+    std::unique_ptr<Sphere> sphere2 = ShapeFactory::createSphere(*shaderFactory, 1.0f);
     sphere2->setPosition(Point(6, 1.7f, 0.5f));
     sphere2->setAmbientReflectance(Color::green());
     sphere2->setMaterial(
         std::make_unique<BlinnPhong>(Color::green(), 0.4f * Color(1, 1, 1), 32, 0.3f * Color::white()));
     sphere2->update();
 
-    std::unique_ptr<Sphere> sphere3 = std::make_unique<Sphere>(20.0f);
+    std::unique_ptr<Sphere> sphere3 = ShapeFactory::createSphere(*shaderFactory, 20.0f);
     sphere3->setPosition(Point(0, 5, 0));
     sphere3->setAmbientReflectance(Color::blue());
     sphere3->setMaterial(std::make_unique<BlinnPhong>(Color::blue(), 0.2f * Color::white(), 32, 0.3f * Color::white()));
@@ -89,8 +93,8 @@ int main(int argc, char* argv[]) {
     std::vector<Point> floorNormals = {{0, 1, 0}};
     std::vector<TriangleData> floorTriangles = {MeshData::createTriangle(0, 3, 2, 0),
                                                 MeshData::createTriangle(0, 2, 1, 0)};
-    std::unique_ptr<Mesh> floor =
-        std::make_unique<Mesh>(MeshData(std::move(floorVertices), std::move(floorNormals), std::move(floorTriangles)));
+    std::unique_ptr<Mesh> floor = ShapeFactory::createMesh(
+        *shaderFactory, MeshData(std::move(floorVertices), std::move(floorNormals), std::move(floorTriangles)));
     floor->setPosition(Point(0, floorHeight, 0));
     floor->setMaterial(std::make_unique<BlinnPhong>(0.5f * Color::white(), Color::black(), 1, 0.3f * Color::white()));
     floor->update();

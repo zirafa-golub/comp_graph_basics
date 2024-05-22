@@ -33,14 +33,9 @@ public:
         toLocal_ = TransformUtils::translateMatrix(-position());
         toLocal_ = inverseRotMat * toLocal_;
         TransformUtils::addScaleLeft(toLocal_, 1.0f / scale());
-
-        transformUpdated();
     }
     const glm::mat4& toGlobalFrameMatrix() const { return toGlobal_; }
     const glm::mat4& toLocalFrameMatrix() const { return toLocal_; }
-
-protected:
-    virtual void transformUpdated(){};
 
 private:
     glm::mat4 toGlobal_ = glm::identity<glm::mat4>();

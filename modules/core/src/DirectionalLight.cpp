@@ -13,8 +13,8 @@ void DirectionalLight::setIntensity(const Color& intensity) { intensity_ = inten
 const glm::vec3& DirectionalLight::direction() const { return direction_; }
 void DirectionalLight::setDirection(const glm::vec3& direction) { direction_ = direction; }
 
-Color DirectionalLight::illuminate(const HitDesc& pointDesc) const {
-    float geometricFactor = std::max(0.0f, glm::dot(pointDesc.unitNormal, -direction_));
+Color DirectionalLight::illuminate(const Point& illuminatedPoint, const glm::vec3& unitNormal) const {
+    float geometricFactor = std::max(0.0f, glm::dot(unitNormal, -direction_));
     return intensity_ * geometricFactor;
 }
 

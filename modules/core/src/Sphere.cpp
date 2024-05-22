@@ -9,55 +9,11 @@
 using namespace cg::angle_literals;
 
 namespace cg {
-Sphere::Sphere(float radius) : radius_(radius), transposedLocalFrame_(glm::transpose(toLocalFrameMatrix())) {}
+Sphere::Sphere(float radius) : radius_(radius) {}
 
 const Point& Sphere::center() const { return position(); }
 
 float Sphere::radius() const { return radius_; }
-
-std::expected<HitDesc, Error> Sphere::hit(const Ray& ray, float tMin, float tMax) const {
-    const auto& toLocalFrame = toLocalFrameMatrix();
-    glm::vec3 localizedOrigin = toLocalFrame * glm::vec4(ray.origin(), 1);
-    glm::vec3 localizedDirection = glm::mat3(toLocalFrame) * ray.direction();
-    Ray localizedRay(localizedOrigin, localizedDirection);
-
-    // since we're doing hit detection in sphere's local frame, we don't need to figure in the sphere center because
-    // it's alsways in frame origin (it's [0, 0, 0])
-    const glm::vec3& centerToOrigin = localizedRay.origin();
-    float radiusSquared = radius_ * radius_;
-    float centerToOriginSquared = glm::dot(centerToOrigin, centerToOrigin);
-
-    // calulate quadratic equation parameters
-    float a = glm::dot(localizedRay.direction(), localizedRay.direction());
-    float b = 2 * glm::dot(localizedRay.direction(), centerToOrigin);
-    float c = centerToOriginSquared - radiusSquared;
-
-    QuadSolve quadSolve = solveQuadEquation(a, b, c);
-
-    if (quadSolve.count > 0) {
-        bool isOriginOutside = radiusSquared < centerToOriginSquared;
-        if (isInRangeIncl(quadSolve.solutions[0], tMin, tMax)) {
-            return formHitDesc(ray, localizedRay, quadSolve.solutions[0], isOriginOutside);
-        } else if (quadSolve.count == 2 && isInRangeIncl(quadSolve.solutions[1], tMin, tMax)) {
-            return formHitDesc(ray, localizedRay, quadSolve.solutions[1], isOriginOutside);
-        }
-    }
-
-    return std::unexpected(ErrorCode::NotFound);
-};
-
-void Sphere::transformUpdated() { transposedLocalFrame_ = glm::transpose(toLocalFrameMatrix()); }
-
-HitDesc Sphere::formHitDesc(const Ray& originalRay, const Ray& localizedRay, float tHit, bool isOriginOutside) const {
-    Point hitPoint = localizedRay.evaluate(tHit);
-
-    glm::vec3 localizedNormal = isOriginOutside ? hitPoint : -hitPoint;
-    // To transform the normal vector to global frame, we need the transposed inverse of the to-global-frame transform
-    // which is transposed to-local-frame transform
-    glm::vec3 unitNormal = glm::normalize(transposedLocalFrame_ * localizedNormal);
-
-    return HitDesc{this, originalRay, tHit, unitNormal};
-}
 
 const MeshData& Sphere::meshData() const {
     assert(meshData_ != nullptr && "Call generateMesh first!");

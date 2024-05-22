@@ -8,6 +8,7 @@ const std::vector<std::unique_ptr<Shape>>& Scene::shapes() const { return shapes
 
 std::vector<Shape*> Scene::shapes() {
     std::vector<Shape*> shapes;
+    shapes.reserve(shapes_.size());
     for (auto& shape : shapes_) {
         shapes.push_back(shape.get());
     }
@@ -20,6 +21,7 @@ const std::vector<std::unique_ptr<Light>>& Scene::lights() const { return lights
 
 std::vector<Light*> Scene::lights() {
     std::vector<Light*> lights;
+    lights.reserve(lights_.size());
     for (auto& light : lights_) {
         lights.push_back(light.get());
     }
@@ -35,18 +37,4 @@ cg::Camera& Scene::camera() { return *camera_; }
 const Color& Scene::ambientLight() const { return ambientLight_; }
 
 void Scene::setAmbientLight(const Color& newAmbient) { ambientLight_ = newAmbient; }
-
-std::expected<HitDesc, Error> Scene::hit(const Ray& ray, float tMin, float tMax) const {
-    std::expected<HitDesc, Error> result = std::unexpected(ErrorCode::NotFound);
-    for (const auto& shape : shapes_) {
-        auto hitResult = shape->hit(ray, tMin, tMax);
-        if (hitResult.has_value()) {
-            result = std::move(hitResult);
-            tMax = result.value().tHit;
-        }
-    }
-
-    return result;
-}
-
 } // namespace cg

@@ -6,18 +6,22 @@
 #include <limits>
 
 namespace cg {
+struct HitDesc;
+
 class RayTraceRenderer {
 public:
-    void renderScene(const Scene& scene, SdlScreen& screen);
+    void renderScene(Scene& scene, SdlScreen& screen);
 
     unsigned maxBounces() const;
     void setMaxBounces(unsigned newMaxBounces);
 
 private:
-    Color shadeRay(const Scene& scene, const Ray& ray, unsigned currBounceCount = 0);
+    Color shadeRay(Scene& scene, const Ray& ray, unsigned currBounceCount);
+    std::optional<HitDesc> hitScene(const Ray& ray, float rayMin, float rayMax);
 
     static constexpr float raySurfaceOffset = 0.00005f;
 
     unsigned maxBounces_ = 5;
+    std::vector<Shape*> sceneShapes_;
 };
 } // namespace cg

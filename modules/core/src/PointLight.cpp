@@ -10,14 +10,12 @@ PointLight::PointLight(const Color& intensity) : intensity_(intensity) {}
 const Color& PointLight::intensity() { return intensity_; }
 void PointLight::setIntensity(const Color& intensity) { intensity_ = intensity; }
 
-Color PointLight::illuminate(const HitDesc& pointDesc) const {
-    Point point = pointDesc.ray.evaluate(pointDesc.tHit);
-
-    glm::vec3 pointToLight = position() - point;
+Color PointLight::illuminate(const Point& illuminatedPoint, const glm::vec3& unitNormal) const {
+    glm::vec3 pointToLight = position() - illuminatedPoint;
     float lightDistance = glm::length(pointToLight);
     glm::vec3 lightDirection = pointToLight / lightDistance;
 
-    float geometricFactor = std::max(0.0f, glm::dot(pointDesc.unitNormal, lightDirection));
+    float geometricFactor = std::max(0.0f, glm::dot(unitNormal, lightDirection));
     return intensity_ * geometricFactor / (lightDistance * lightDistance);
 }
 
