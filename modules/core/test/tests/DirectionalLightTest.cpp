@@ -1,8 +1,6 @@
 #include "gtest/gtest.h"
 
 #include "core/DirectionalLight.h"
-#include "core/Material.h"
-#include "core/Shape.h"
 
 #include "glm/vec3.hpp"
 
@@ -10,7 +8,6 @@
 #include "test_utils/Utils.h"
 
 #include <cmath>
-#include <expected>
 #include <limits>
 
 using namespace cg;

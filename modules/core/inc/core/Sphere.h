@@ -8,7 +8,6 @@
 
 #include <array>
 #include <cmath>
-#include <expected>
 
 namespace cg {
 class Angle;

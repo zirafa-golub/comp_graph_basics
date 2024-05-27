@@ -6,8 +6,6 @@
 
 #include "glm/vec3.hpp"
 
-#include <expected>
-
 namespace cg {
 class Color;
 }
