@@ -8,7 +8,7 @@ namespace cg {
 class Mesh : public Shape {
 public:
     Mesh(MeshData meshData) : meshData_(std::move(meshData)) {}
-    const MeshData& meshData() const override { return meshData_; }
+    const MeshData& meshData() const { return meshData_; }
 
 private:
     MeshData meshData_;

@@ -1,4 +1,4 @@
-#include "screen/SdlScreen.h"
+#include "SdlScreen.h"
 
 #include "glm/ext/vector_common.hpp"
 #include "glm/vec3.hpp"

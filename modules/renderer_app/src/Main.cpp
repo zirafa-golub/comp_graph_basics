@@ -8,9 +8,12 @@
 #include "core/PointLight.h"
 #include "core/Scene.h"
 #include "core/Sphere.h"
+#include "mesh/MeshGenerator.h"
+#include "rasterizer/RasterizerRenderer.h"
+#include "RasterizerShaderFactory.h"
 #include "ray_tracer/RayTraceRenderer.h"
 #include "RayTracerShaderFactory.h"
-#include "screen/SdlScreen.h"
+#include "SdlScreen.h"
 #include "ShapeFactory.h"
 
 #include "SDL2/SDL.h"
@@ -25,11 +28,13 @@ using namespace cg::angle_literals;
 constexpr int screenWidth = 1200;
 constexpr int screenHeight = 800;
 
+template <typename Renderer, template <typename ShapeType> typename ShaderFactory, typename Screen>
+void runApp(Screen& screen);
 static void quit(int code);
 
 int main(int argc, char* argv[]) {
-    SDL_Window* window =
-        SDL_CreateWindow("raytracer", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, screenWidth, screenHeight, 0);
+    SDL_Window* window = SDL_CreateWindow("renderer_app", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, screenWidth,
+                                          screenHeight, 0);
     if (window == nullptr) {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to create window and renderer: %s\n", SDL_GetError());
         quit(1);
@@ -43,6 +48,14 @@ int main(int argc, char* argv[]) {
 
     SdlScreen screen = std::move(result.value());
 
+    runApp<RasterizerRenderer, RasterizerShaderFactory>(screen);
+
+    quit(0);
+    return 0;
+}
+
+template <typename Renderer, template <typename ShapeType> typename ShaderFactory, typename Screen>
+void runApp(Screen& screen) {
     // Prepare scene
     Scene scene;
     scene.setAmbientLight(0.05f * Color::white());
@@ -62,40 +75,30 @@ int main(int argc, char* argv[]) {
     std::unique_ptr<PointLight> pointLight2 = std::make_unique<PointLight>(100 * Color::white());
     pointLight2->setPosition(Point(-4, 4, -8));
 
-    std::unique_ptr<ShaderGroupFactory> shaderFactory = std::make_unique<RayTracerShaderFactory>();
-
-    std::unique_ptr<Sphere> sphere1 = ShapeFactory::createSphere(*shaderFactory, 2.0f);
+    std::unique_ptr<Sphere> sphere1 = ShapeFactory::create<Sphere, ShaderFactory>(2.0f);
     sphere1->setPosition(Point(10, 0, -3));
     sphere1->setAmbientReflectance(Color::red());
     sphere1->setMaterial(std::make_unique<BlinnPhong>(Color::red(), 0.4f * Color::white(), 32, 0.3f * Color::white()));
     sphere1->update();
 
-    std::unique_ptr<Sphere> sphere2 = ShapeFactory::createSphere(*shaderFactory, 1.0f);
+    std::unique_ptr<Sphere> sphere2 = ShapeFactory::create<Sphere, ShaderFactory>(1.0f);
     sphere2->setPosition(Point(6, 1.7f, 0.5f));
     sphere2->setAmbientReflectance(Color::green());
     sphere2->setMaterial(
         std::make_unique<BlinnPhong>(Color::green(), 0.4f * Color(1, 1, 1), 32, 0.3f * Color::white()));
     sphere2->update();
 
-    std::unique_ptr<Sphere> sphere3 = ShapeFactory::createSphere(*shaderFactory, 20.0f);
+    std::unique_ptr<Sphere> sphere3 = ShapeFactory::create<Sphere, ShaderFactory>(20.0f);
     sphere3->setPosition(Point(0, 5, 0));
     sphere3->setAmbientReflectance(Color::blue());
     sphere3->setMaterial(std::make_unique<BlinnPhong>(Color::blue(), 0.2f * Color::white(), 32, 0.3f * Color::white()));
     sphere3->update();
 
-    constexpr float floorWidth = 1000;
-    constexpr float floorLength = 100;
-    constexpr float floorHeight = -2.0f;
-    std::vector<Point> floorVertices = {{floorLength / 2, 0, -floorWidth / 2},
-                                        {floorLength / 2, 0, floorWidth / 2},
-                                        {-floorLength / 2, 0, floorWidth / 2},
-                                        {-floorLength / 2, 0, -floorWidth / 2}};
-    std::vector<Point> floorNormals = {{0, 1, 0}};
-    std::vector<TriangleData> floorTriangles = {MeshData::createTriangle(0, 3, 2, 0),
-                                                MeshData::createTriangle(0, 2, 1, 0)};
-    std::unique_ptr<Mesh> floor = ShapeFactory::createMesh(
-        *shaderFactory, MeshData(std::move(floorVertices), std::move(floorNormals), std::move(floorTriangles)));
-    floor->setPosition(Point(0, floorHeight, 0));
+    std::unique_ptr<Mesh> floor =
+        ShapeFactory::create<Mesh, ShaderFactory>(MeshGenerator::generateRectangle({100, 1000}, 10, 10));
+    floor->setRotation(-90_deg, 0_deg, 0_deg);
+    floor->setPosition(Point(0, -2, 0));
+    floor->update();
     floor->setMaterial(std::make_unique<BlinnPhong>(0.5f * Color::white(), Color::black(), 1, 0.3f * Color::white()));
     floor->update();
 
@@ -108,7 +111,7 @@ int main(int argc, char* argv[]) {
     scene.setCamera(std::move(camera));
 
     // Prepare render loop
-    RayTraceRenderer renderer;
+    Renderer renderer;
 
     float timeElapsed = 0;
     float fps = 0;
@@ -147,9 +150,6 @@ int main(int argc, char* argv[]) {
             std::cout << "AVR: " << averageCalc.average() << ", FPS: " << fps << std::endl;
         }
     }
-
-    quit(0);
-    return 0;
 }
 
 void quit(int code) {

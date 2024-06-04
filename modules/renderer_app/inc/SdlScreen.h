@@ -3,7 +3,7 @@
 #include "common/Error.h"
 #include "common/MemUtils.h"
 #include "core/Color.h"
-#include "screen/Screen.h"
+#include "renderer/Screen.h"
 
 #include "SDL.h"
 

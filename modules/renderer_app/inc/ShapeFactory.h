@@ -6,28 +6,28 @@
 #include "core/Sphere.h"
 
 #include <concepts>
+#include <memory>
 
 namespace cg {
-struct ShaderGroupFactory {
-    virtual ~ShaderGroupFactory() = default;
-
-    virtual std::unique_ptr<ShaderGroup> createSphereShaders() const = 0;
-    virtual std::unique_ptr<ShaderGroup> createMeshShaders() const = 0;
+namespace detail {
+template <typename FactoryType>
+concept HasShaderGroupCreateType = requires {
+    { FactoryType::create() } -> std::same_as<std::unique_ptr<ShaderGroup>>;
 };
+} // namespace detail
+
+template <template <typename T> typename FactoryType>
+concept IsShaderGroupFactory =
+    detail::HasShaderGroupCreateType<FactoryType<Sphere>> && detail::HasShaderGroupCreateType<FactoryType<Mesh>>;
 
 struct ShapeFactory {
-    template <typename... ShapeArgs>
-    static std::unique_ptr<Sphere> createSphere(const ShaderGroupFactory& shaderFactory, ShapeArgs&&... shapeArgs) {
-        auto shape = std::make_unique<Sphere>(std::forward<ShapeArgs>(shapeArgs)...);
-        shape->setShaderGroup(shaderFactory.createSphereShaders());
-        return shape;
-    }
-
-    template <typename... ShapeArgs>
-    static std::unique_ptr<Mesh> createMesh(const ShaderGroupFactory& shaderFactory, ShapeArgs&&... shapeArgs) {
-        auto shape = std::make_unique<Mesh>(std::forward<ShapeArgs>(shapeArgs)...);
-        shape->setShaderGroup(shaderFactory.createMeshShaders());
+    template <typename ShapeType, template <typename T> typename ShaderGroupFactory, typename... ShapeArgs>
+        requires std::derived_from<ShapeType, Shape> && IsShaderGroupFactory<ShaderGroupFactory>
+    static std::unique_ptr<ShapeType> create(ShapeArgs&&... shapeArgs) {
+        auto shape = std::make_unique<ShapeType>(std::forward<ShapeArgs>(shapeArgs)...);
+        shape->setShaderGroup(ShaderGroupFactory<ShapeType>::create());
         return shape;
     }
 };
+
 } // namespace cg

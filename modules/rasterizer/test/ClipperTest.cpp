@@ -167,9 +167,9 @@ TEST_F(ClipperTest, clip_meshInsideFrustum_shouldNotClip) {
     std::vector<Point> vertices = {{1, 1, 4}, {2, 3, 5}, {4, -3, 6}};
     std::vector<Point> vertexNormals = {{0, 1, 0}};
     std::vector<TriangleData> triangles = {MeshData::createTriangle(0, 1, 2, 0)};
-    MeshData meshData(std::move(vertices), std::move(vertexNormals), std::move(triangles));
+    const MeshData meshData(std::move(vertices), std::move(vertexNormals), std::move(triangles));
 
-    MeshData clippedMeshData = clipper_.clip(meshData);
+    const MeshData clippedMeshData = clipper_.clip(meshData);
 
     assertSpansEqual(clippedMeshData.vertices(), meshData.vertices());
     assertSpansEqual(clippedMeshData.vertexNormals(), meshData.vertexNormals());
@@ -249,9 +249,9 @@ TEST_F(ClipperTest, clip_multipleTrianglesInside_shouldNotDuplicateExistingVerti
     std::vector<Point> vertices = {{1, 1, 4}, {2, 3, 5}, {4, -3, 6}, {6, 5, 8}};
     std::vector<Point> vertexNormals = {{0, 1, 0}};
     std::vector<TriangleData> triangles = {MeshData::createTriangle(0, 1, 2, 0), MeshData::createTriangle(0, 1, 3, 0)};
-    MeshData meshData(std::move(vertices), std::move(vertexNormals), std::move(triangles));
+    const MeshData meshData(std::move(vertices), std::move(vertexNormals), std::move(triangles));
 
-    MeshData clippedMeshData = clipper_.clip(meshData);
+    const MeshData clippedMeshData = clipper_.clip(meshData);
 
     assertSpansEqual(clippedMeshData.vertices(), meshData.vertices());
     assertSpansEqual(clippedMeshData.vertexNormals(), meshData.vertexNormals());

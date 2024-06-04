@@ -26,7 +26,7 @@ public:
     static constexpr Planes AllPlanes = 0x3F;
     static constexpr Planes NoPlanes = 0x00;
 
-    FrustumIntersect(const PerspectiveCamera::FrustumPoints& frustum);
+    explicit FrustumIntersect(const PerspectiveCamera::FrustumPoints& frustum);
     Planes planesBelowVertex(const Point& vertex, Planes planesToCheck = AllPlanes) const;
     std::optional<PlaneIntersect::SegmentIntersection> findIntersectionPoint(const Point& v1, const Point& v2,
                                                                              Planes planesToCheck) const;
@@ -44,7 +44,8 @@ private:
 
 class Clipper {
 public:
-    Clipper(const FrustumIntersect& frustum);
+    explicit Clipper(const FrustumIntersect& frustum,
+                     FrustumIntersect::Planes clippingPlanes = FrustumIntersect::AllPlanes);
     MeshData clip(const MeshData& mesh);
 
 private:
@@ -60,6 +61,7 @@ private:
     static constexpr MeshData::Index notCopiedIndex = -1;
 
     const FrustumIntersect& frustum_;
+    const FrustumIntersect::Planes clippingPlanes_;
 
     const MeshData* inputMesh_;
     std::vector<FrustumIntersect::Planes> planesBelowVertex_;

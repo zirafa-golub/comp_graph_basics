@@ -2,6 +2,8 @@
 
 #include "core/Color.h"
 
+#include <concepts>
+
 namespace cg {
 
 template <typename T>

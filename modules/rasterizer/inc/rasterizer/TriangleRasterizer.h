@@ -3,7 +3,7 @@
 #include "core/BasicTypes.h"
 #include "core/Color.h"
 #include "core/LineEquation2d.h"
-#include "screen/Screen.h"
+#include "renderer/Screen.h"
 
 #include <algorithm>
 #include <cmath>

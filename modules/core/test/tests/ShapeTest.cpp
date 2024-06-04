@@ -6,13 +6,7 @@
 
 using namespace cg;
 
-class TestShape : public cg::Shape {
-public:
-    const cg::MeshData& meshData() const override { return meshData_; }
-
-private:
-    cg::MeshData meshData_ = cg::MeshData({}, {}, {});
-};
+class TestShape : public cg::Shape {};
 
 struct TestShaderGroup : public cg::ShaderGroup {};
 

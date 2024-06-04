@@ -1,32 +1,8 @@
 #include "ray_tracer/RayTraceRenderer.h"
-#include "ray_tracer/RayTracerShaders.h"
 
 #include <limits>
 
-#include "core/Sphere.h"
-
 namespace cg {
-
-void RayTraceRenderer::renderScene(Scene& scene, SdlScreen& screen) {
-    sceneShapes_ = scene.shapes();
-
-    for (auto shape : sceneShapes_) {
-        RayTracerShaders& shaderGroup = static_cast<RayTracerShaders&>(shape->shaderGroup());
-        shaderGroup.hitDetector().initForFrame();
-    }
-
-    const Camera& camera = scene.camera();
-    auto res = camera.resolution();
-    SdlScreen::Painter painter = screen.paintPixels();
-
-    for (unsigned row = 0; row < res.height; ++row) {
-        for (unsigned col = 0; col < res.width; ++col) {
-            Color pixelColor = shadeRay(scene, camera.castRay(col, row), 0);
-            painter.paintPixel(row, col, pixelColor);
-        }
-    }
-}
-
 Color RayTraceRenderer::shadeRay(Scene& scene, const Ray& ray, unsigned currBounceCount) {
     Color pixelColor = Color(0, 0, 0);
     auto result = hitScene(ray, 0, std::numeric_limits<float>::infinity());

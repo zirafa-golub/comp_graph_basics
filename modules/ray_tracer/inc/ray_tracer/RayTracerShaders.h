@@ -9,7 +9,7 @@ namespace cg {
 
 class RayTracerShaders : public ShaderGroup {
 public:
-    RayTracerShaders(std::unique_ptr<HitDetector> hitDetector) : ShaderGroup(), hitDetector_(std::move(hitDetector)) {
+    RayTracerShaders(std::unique_ptr<HitDetector>&& hitDetector) : hitDetector_(std::move(hitDetector)) {
         hitDetector_->setShaderGroup(*this);
     }
 

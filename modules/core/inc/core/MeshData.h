@@ -23,6 +23,16 @@ public:
 
     using TriangleData = std::array<VertexData, 3>;
 
+    struct Data {
+        std::vector<Point> vertices;
+        std::vector<glm::vec3> vertexNormals;
+        std::vector<TriangleData> triangles;
+
+        Data(std::vector<Point> vertices_, std::vector<glm::vec3> vertexNormals_, std::vector<TriangleData> triangles_)
+            : vertices(std::move(vertices_)), vertexNormals(std::move(vertexNormals_)),
+              triangles(std::move(triangles_)) {}
+    };
+
     static TriangleData createTriangle(Index vertex1, Index vertex2, Index vertex3) {
         return TriangleData({{vertex1, vertex1}, {vertex2, vertex2}, {vertex3, vertex3}});
     }
@@ -33,17 +43,22 @@ public:
         return TriangleData({vertex1, vertex2, vertex3});
     }
 
-    MeshData(std::vector<Point> vertices, std::vector<glm::vec3> vertexNormals, std::vector<TriangleData> triangles)
-        : vertices_(std::move(vertices)), vertexNormals_(std::move(vertexNormals)), triangles_(std::move(triangles)) {}
+    MeshData() = default;
 
-    std::span<const Point> vertices() const { return vertices_; }
-    std::span<const glm::vec3> vertexNormals() const { return vertexNormals_; }
-    std::span<const TriangleData> triangles() const { return triangles_; }
+    MeshData(std::vector<Point> vertices, std::vector<glm::vec3> vertexNormals, std::vector<TriangleData> triangles)
+        : data_(std::move(vertices), std::move(vertexNormals), std::move(triangles)) {}
+    MeshData(Data data) : data_(std::move(data)) {}
+
+    std::span<const Point> vertices() const { return data_.vertices; }
+    std::span<Point> vertices() { return data_.vertices; }
+    std::span<const glm::vec3> vertexNormals() const { return data_.vertexNormals; }
+    std::span<glm::vec3> vertexNormals() { return data_.vertexNormals; }
+    std::span<const TriangleData> triangles() const { return data_.triangles; }
+    std::span<TriangleData> triangles() { return data_.triangles; }
+    Data claimData() { return std::move(data_); }
 
 private:
-    std::vector<Point> vertices_;
-    std::vector<glm::vec3> vertexNormals_;
-    std::vector<TriangleData> triangles_;
+    Data data_;
 };
 
 using VertexData = MeshData::VertexData;

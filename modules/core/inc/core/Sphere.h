@@ -19,13 +19,7 @@ public:
 
     float radius() const;
 
-    const MeshData& meshData() const override;
-    void generateMesh(unsigned verticalSegments, unsigned horizontalSegments);
-
 private:
-    Point generatePoint(Angle verticalAngle, Angle horizontalAngle) const;
-
     float radius_;
-    std::unique_ptr<MeshData> meshData_;
 };
 } // namespace cg

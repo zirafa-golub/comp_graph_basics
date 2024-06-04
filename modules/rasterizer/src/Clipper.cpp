@@ -139,7 +139,8 @@ bool FrustumIntersect::isBelowPlanes(const Point& vertex, Planes planesToCheck) 
     return true;
 }
 
-Clipper::Clipper(const FrustumIntersect& frustum) : frustum_(frustum), inputMesh_(nullptr) {}
+Clipper::Clipper(const FrustumIntersect& frustum, FrustumIntersect::Planes clippingPlanes)
+    : frustum_(frustum), clippingPlanes_(clippingPlanes), inputMesh_(nullptr) {}
 
 void Clipper::initForMesh(const MeshData& mesh) {
     size_t vertexCount = mesh.vertices().size();
@@ -177,7 +178,7 @@ MeshData Clipper::clip(const MeshData& mesh) {
 void Clipper::populateVertexFrustumInfo() {
     const auto& vertices = inputMesh_->vertices();
     for (unsigned i = 0; i < vertices.size(); ++i) {
-        planesBelowVertex_[i] = frustum_.planesBelowVertex(vertices[i]);
+        planesBelowVertex_[i] = frustum_.planesBelowVertex(vertices[i], clippingPlanes_);
     }
 }
 

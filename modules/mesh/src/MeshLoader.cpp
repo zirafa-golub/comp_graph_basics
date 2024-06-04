@@ -1,4 +1,4 @@
-#include "asset/MeshLoader.h"
+#include "mesh/MeshLoader.h"
 
 #include "common/Error.h"
 

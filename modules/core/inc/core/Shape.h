@@ -16,8 +16,6 @@ namespace cg {
 
 class Shape : public Transformable {
 public:
-    virtual const MeshData& meshData() const = 0;
-
     const Material& material() const { return *material_; }
     Material& material() { return *material_; }
     void setMaterial(std::unique_ptr<Material> material) { material_ = std::move(material); }
