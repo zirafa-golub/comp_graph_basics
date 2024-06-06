@@ -1,24 +1,51 @@
 #pragma once
 
 #include "core/BasicTypes.h"
-#include "core/Color.h"
 #include "core/LineEquation2d.h"
-#include "renderer/Screen.h"
+
+#include "glm/geometric.hpp"
 
 #include <algorithm>
-#include <cmath>
+#include <array>
+#include <concepts>
+#include <functional>
 
 namespace cg {
+struct FragmentData {
+    int x;
+    int y;
+    float z;
+    glm::vec3 normal;
+    Point pos3d;
+};
+
+template <typename T>
+concept FragmentPainter = requires(T painter, const FragmentData& fragmentData) {
+    { painter.paintFragment(fragmentData) } -> std::same_as<void>;
+    { painter.width() } -> std::convertible_to<int>;
+    { painter.height() } -> std::convertible_to<int>;
+};
+
 class TriangleRasterizer {
 public:
     TriangleRasterizer() = delete;
 
-    template <PixelPainter Painter>
-    static void rasterize(const Point& p1, const Point& p2, const Point& p3, Painter& painter) {
+    template <FragmentPainter Painter>
+    static void rasterize(std::array<std::reference_wrapper<const Point>, 3> homogenizedScreenPoints,
+                          std::array<std::reference_wrapper<const glm::vec3>, 3> pos3ds,
+                          std::array<std::reference_wrapper<const glm::vec3>, 3> normals,
+                          const std::array<float, 3>& invertedW, Painter& fragmentPainter) {
+        const Point& p1 = homogenizedScreenPoints[0];
+        const Point& p2 = homogenizedScreenPoints[1];
+        const Point& p3 = homogenizedScreenPoints[2];
+        glm::vec3 dividedN1 = normals[0].get() * invertedW[0];
+        glm::vec3 dividedN2 = normals[1].get() * invertedW[1];
+        glm::vec3 dividedN3 = normals[2].get() * invertedW[2];
+
         int minX = std::max(static_cast<int>(std::min({p1.x, p2.x, p3.x})), 0);
-        int maxX = std::min(static_cast<int>(std::max({p1.x, p2.x, p3.x})) + 1, painter.width());
+        int maxX = std::min(static_cast<int>(std::max({p1.x, p2.x, p3.x})) + 1, fragmentPainter.width());
         int minY = std::max(static_cast<int>(std::min({p1.y, p2.y, p3.y})), 0);
-        int maxY = std::min(static_cast<int>(std::max({p1.y, p2.y, p3.y})) + 1, painter.height());
+        int maxY = std::min(static_cast<int>(std::max({p1.y, p2.y, p3.y})) + 1, fragmentPainter.height());
 
         LineEquation2d line12(p1, p2);
         LineEquation2d line23(p2, p3);
@@ -35,7 +62,7 @@ public:
                 float fpy = static_cast<float>(y);
 
                 float alpha = line23.eval(fpx, fpy) / fAlpha;
-                // Checks for alpha, beta and gamma below are intentionally formed like this instead of alpha > 0 so NaN
+                // Checks for alpha, beta and gamma below are intentionally formed like this instead of alpha < 0 so NaN
                 // values would fail the check as well
                 if (!(alpha >= 0)) {
                     continue;
@@ -44,14 +71,26 @@ public:
                 if (!(beta >= 0)) {
                     continue;
                 }
-                float gamma = 1 - alpha - beta;
+                float gamma = line12.eval(fpx, fpy) / fGamma;
                 if (!(gamma >= 0)) {
                     continue;
                 }
 
                 if ((alpha > 0 || shouldDrawWhenOnEdge(line23)) && (beta > 0 || shouldDrawWhenOnEdge(line31)) &&
                     (gamma > 0 || shouldDrawWhenOnEdge(line12))) {
-                    painter.paintPixel(y, x, Color::white());
+                    FragmentData fragmentData;
+                    fragmentData.x = x;
+                    fragmentData.y = y;
+                    float fragInvW = alpha * invertedW[0] + beta * invertedW[1] + gamma * invertedW[2];
+                    fragmentData.pos3d =
+                        (alpha * invertedW[0] * pos3ds[0].get() + beta * invertedW[1] * pos3ds[1].get() +
+                         gamma * invertedW[2] * pos3ds[2].get()) /
+                        fragInvW;
+                    fragmentData.z = alpha * p1.z + beta * p2.z + gamma * p3.z;
+                    fragmentData.normal =
+                        glm::normalize((alpha * dividedN1 + beta * dividedN2 + gamma * dividedN3) / fragInvW);
+
+                    fragmentPainter.paintFragment(fragmentData);
                 }
             }
         }

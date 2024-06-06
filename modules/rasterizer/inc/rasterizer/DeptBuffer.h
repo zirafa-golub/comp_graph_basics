@@ -5,7 +5,7 @@
 namespace cg {
 class DepthBuffer {
 public:
-    static constexpr float farthest = 1.0f;
+    static constexpr float farthest = -1.0f;
 
     DepthBuffer(int width, int height);
 

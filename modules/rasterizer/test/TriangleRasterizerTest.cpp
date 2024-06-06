@@ -11,8 +11,8 @@ class TestPainter {
 public:
     TestPainter(int width, int height) : width_(width), height_(height), pixels_(width_ * height_) {}
 
-    void paintPixel(unsigned row, unsigned col, const Color& color) {
-        pixels_[row * width_ + col] = color;
+    void paintFragment(const FragmentData& frag) {
+        pixels_[frag.y * width_ + frag.x] = Color::white();
         ++pixelsDrawn_;
     }
     int width() const { return width_; }
@@ -33,6 +33,7 @@ private:
     std::vector<Color> pixels_;
     unsigned pixelsDrawn_ = 0;
 };
+static_assert(FragmentPainter<TestPainter>, "TestPainter does not fulfil the FragmentPainter concept.");
 
 struct Vector2i {
     int x;
@@ -58,23 +59,33 @@ void assertColoredPixels(std::set<Vector2i> coloredPixels, const TestPainter& pa
 TEST(TriangleRasterizerTest, rasterize_triangleOffScreen_shouldDrawNothing) {
     constexpr int width = 10;
     constexpr int height = 8;
+    std::array<glm::vec3, 3> normals = {};
+    std::array<glm::vec3, 3> globalPoints = {};
 
     TestPainter painter(width, height);
 
     // triangle to the left of screen
-    TriangleRasterizer::rasterize({-5, 3, 0}, {-2, 2, 0}, {-3, 6, 0}, painter);
+    std::array<Point, 3> points = {Point{-5, 3, 0}, Point{-2, 2, 0}, Point{-3, 6, 0}};
+    TriangleRasterizer::rasterize({points[0], points[1], points[2]}, {normals[0], normals[1], normals[2]},
+                                  {globalPoints[0], globalPoints[1], globalPoints[2]}, {0, 0, 0}, painter);
     assertColoredPixels({}, painter);
     painter.clear();
     // triangle to the right of screen
-    TriangleRasterizer::rasterize({12, 3, 0}, {16, 2, 0}, {13, 6, 0}, painter);
+    points = {Point{12, 3, 0}, Point{16, 2, 0}, Point{13, 6, 0}};
+    TriangleRasterizer::rasterize({points[0], points[1], points[2]}, {normals[0], normals[1], normals[2]},
+                                  {globalPoints[0], globalPoints[1], globalPoints[2]}, {0, 0, 0}, painter);
     assertColoredPixels({}, painter);
     painter.clear();
     // triangle above screen
-    TriangleRasterizer::rasterize({4, 10, 0}, {7, 11, 0}, {5, 14, 0}, painter);
+    points = {Point{4, 10, 0}, Point{7, 11, 0}, Point{5, 14, 0}};
+    TriangleRasterizer::rasterize({points[0], points[1], points[2]}, {normals[0], normals[1], normals[2]},
+                                  {globalPoints[0], globalPoints[1], globalPoints[2]}, {0, 0, 0}, painter);
     assertColoredPixels({}, painter);
     painter.clear();
     // triangle below screen
-    TriangleRasterizer::rasterize({4, -1, 0}, {7, -2, 0}, {5, -4, 0}, painter);
+    points = {Point{4, -1, 0}, Point{7, -2, 0}, Point{5, -4, 0}};
+    TriangleRasterizer::rasterize({points[0], points[1], points[2]}, {normals[0], normals[1], normals[2]},
+                                  {globalPoints[0], globalPoints[1], globalPoints[2]}, {0, 0, 0}, painter);
     assertColoredPixels({}, painter);
     painter.clear();
 }
@@ -85,7 +96,11 @@ TEST(TriangleRasterizerTest, rasterize_trianglePartiallyOnScreen_shouldDrawOnlyV
 
     TestPainter painter(width, height);
 
-    TriangleRasterizer::rasterize({0.8f, 5.8f, 0}, {5.2f, 9.2f, 0}, {0.8f, 9.2f, 0}, painter);
+    std::array<Point, 3> points = {Point{0.8f, 5.8f, 0}, Point{5.2f, 9.2f, 0}, Point{0.8f, 9.2f, 0}};
+    std::array<glm::vec3, 3> normals = {};
+    std::array<glm::vec3, 3> globalPoints = {};
+    TriangleRasterizer::rasterize({points[0], points[1], points[2]}, {normals[0], normals[1], normals[2]},
+                                  {globalPoints[0], globalPoints[1], globalPoints[2]}, {0, 0, 0}, painter);
     assertColoredPixels({{1, 7}, {2, 7}, {1, 6}}, painter);
 }
 
@@ -95,22 +110,32 @@ TEST(TriangleRasterizerTest, rasterize_triangleOnScreen_shouldDrawTriangle) {
 
     TestPainter painter(width, height);
 
-    TriangleRasterizer::rasterize({2, 2.7f, 0}, {3.2, 5.2, 0}, {1.8f, 5.2f, 0}, painter);
+    std::array<Point, 3> points = {Point{2, 2.7f, 0}, Point{3.2, 5.2, 0}, Point{1.8f, 5.2f, 0}};
+    std::array<glm::vec3, 3> normals = {};
+    std::array<glm::vec3, 3> globalPoints = {};
+    TriangleRasterizer::rasterize({points[0], points[1], points[2]}, {normals[0], normals[1], normals[2]},
+                                  {globalPoints[0], globalPoints[1], globalPoints[2]}, {0, 0, 0}, painter);
     assertColoredPixels({{2, 5}, {3, 5}, {2, 4}, {2, 3}}, painter);
 }
 
 TEST(TriangleRasterizerTest, rasterize_sameTriangleDifferentZ_shouldDrawSame) {
     constexpr int width = 10;
     constexpr int height = 8;
+    std::array<glm::vec3, 3> normals = {};
+    std::array<glm::vec3, 3> globalPoints = {};
 
     TestPainter painter(width, height);
 
-    TriangleRasterizer::rasterize({2, 2.7f, 0}, {3.2, 5.2, 0}, {1.8f, 5.2f, 0}, painter);
+    std::array<Point, 3> points = {Point{2, 2.7f, 0}, Point{3.2, 5.2, 0}, Point{1.8f, 5.2f, 0}};
+    TriangleRasterizer::rasterize({points[0], points[1], points[2]}, {normals[0], normals[1], normals[2]},
+                                  {globalPoints[0], globalPoints[1], globalPoints[2]}, {0, 0, 0}, painter);
     auto first = painter.pixels();
 
     painter.clear();
 
-    TriangleRasterizer::rasterize({2, 2.7f, 1}, {3.2, 5.2, -2}, {1.8f, 5.2f, 3}, painter);
+    points = {Point{2, 2.7f, 1}, Point{3.2, 5.2, -2}, Point{1.8f, 5.2f, 3}};
+    TriangleRasterizer::rasterize({points[0], points[1], points[2]}, {normals[0], normals[1], normals[2]},
+                                  {globalPoints[0], globalPoints[1], globalPoints[2]}, {0, 0, 0}, painter);
     auto second = painter.pixels();
 
     EXPECT_EQ(first, second);
@@ -119,11 +144,17 @@ TEST(TriangleRasterizerTest, rasterize_sameTriangleDifferentZ_shouldDrawSame) {
 TEST(TriangleRasterizerTest, rasterize_twoTrianglesPixelsOnSharedEdge_shouldDrawEveryPixelOnce) {
     constexpr int width = 10;
     constexpr int height = 8;
+    std::array<glm::vec3, 3> normals = {};
+    std::array<glm::vec3, 3> globalPoints = {};
 
     TestPainter painter(width, height);
 
-    TriangleRasterizer::rasterize({5, 5.5f, 0}, {5, 2.5f, 0}, {6.5f, 4, 0}, painter);
-    TriangleRasterizer::rasterize({5, 5.5f, 0}, {3.5f, 4, 0}, {5, 2.5f, 0}, painter);
+    std::array<Point, 3> points = {Point{5, 5.5f, 0}, Point{5, 2.5f, 0}, Point{6.5f, 4, 0}};
+    TriangleRasterizer::rasterize({points[0], points[1], points[2]}, {normals[0], normals[1], normals[2]},
+                                  {globalPoints[0], globalPoints[1], globalPoints[2]}, {0, 0, 0}, painter);
+    points = {Point{5, 5.5f, 0}, Point{3.5f, 4, 0}, Point{5, 2.5f, 0}};
+    TriangleRasterizer::rasterize({points[0], points[1], points[2]}, {normals[0], normals[1], normals[2]},
+                                  {globalPoints[0], globalPoints[1], globalPoints[2]}, {0, 0, 0}, painter);
 
     std::set<Vector2i> coloredPixels = {{5, 5}, {4, 4}, {5, 4}, {6, 4}, {5, 3}};
     assertColoredPixels(coloredPixels, painter);
@@ -132,15 +163,21 @@ TEST(TriangleRasterizerTest, rasterize_twoTrianglesPixelsOnSharedEdge_shouldDraw
 TEST(TriangleRasterizerTest, rasterize_degenerateTriangle_shouldDrawNothing) {
     constexpr unsigned width = 10;
     constexpr unsigned height = 8;
+    std::array<glm::vec3, 3> normals = {};
+    std::array<glm::vec3, 3> globalPoints = {};
 
     TestPainter painter(width, height);
 
     // All pixels on edge
-    TriangleRasterizer::rasterize({5, 5, 0}, {5, 4, 0}, {5, 2, 0}, painter);
+    std::array<Point, 3> points = {Point{5, 5, 0}, Point{5, 4, 0}, Point{5, 2, 0}};
+    TriangleRasterizer::rasterize({points[0], points[1], points[2]}, {normals[0], normals[1], normals[2]},
+                                  {globalPoints[0], globalPoints[1], globalPoints[2]}, {0, 0, 0}, painter);
     assertColoredPixels({}, painter);
     painter.clear();
 
     // Pixels not on edge
-    TriangleRasterizer::rasterize({4.8f, 5, 0}, {5, 4, 0}, {5.2f, 3, 0}, painter);
+    points = {Point{4.8f, 5, 0}, Point{5, 4, 0}, Point{5.2f, 3, 0}};
+    TriangleRasterizer::rasterize({points[0], points[1], points[2]}, {normals[0], normals[1], normals[2]},
+                                  {globalPoints[0], globalPoints[1], globalPoints[2]}, {0, 0, 0}, painter);
     assertColoredPixels({}, painter);
 }

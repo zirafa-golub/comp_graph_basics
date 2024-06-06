@@ -15,7 +15,7 @@ DepthBuffer::DepthBuffer(int width, int height) : width_(width), height_(height)
 bool DepthBuffer::updateIfNearer(int x, int y, float newDepth) {
     assert(newDepth > -1.0f && newDepth < 1.0f);
     float& depthPixel = buffer_[y * width_ + x];
-    if (newDepth < depthPixel) {
+    if (newDepth > depthPixel) {
         depthPixel = newDepth;
         return true;
     }

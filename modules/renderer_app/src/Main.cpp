@@ -18,7 +18,6 @@
 
 #include "SDL2/SDL.h"
 
-#include <chrono>
 #include <iostream>
 #include <memory>
 
@@ -135,6 +134,7 @@ void runApp(Screen& screen) {
                 break;
             }
         }
+        screen.clearScreen();
 
         renderer.renderScene(scene, screen);
 

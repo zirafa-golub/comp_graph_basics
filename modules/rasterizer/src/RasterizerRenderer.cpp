@@ -30,12 +30,16 @@ MeshData RasterizerRenderer::cullBackFaceTriangles(MeshData& mesh, const BackFac
     return MeshData(std::move(meshData.vertices), std::move(meshData.vertexNormals), std::move(nonCulledTriangles));
 }
 
-void RasterizerRenderer::verticesToScreenSpace(const glm::mat4& toScreenMatrix, MeshData& mesh) {
-    std::vector<glm::vec4> screenSpaceVertices;
+std::vector<float> RasterizerRenderer::verticesToScreenSpace(const glm::mat4& toScreenMatrix, MeshData& mesh) {
+    std::vector<float> invW;
+    invW.reserve(mesh.vertices().size());
 
     for (Point& point : mesh.vertices()) {
         glm::vec4 transformedVertex = toScreenMatrix * glm::vec4(point, 1.0f);
-        point = transformedVertex / transformedVertex.w;
+        invW.push_back(1 / transformedVertex.w);
+        point = transformedVertex;
+        point /= transformedVertex.w;
     }
+    return invW;
 }
 } // namespace cg
