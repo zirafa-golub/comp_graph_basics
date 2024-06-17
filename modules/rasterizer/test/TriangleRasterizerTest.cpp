@@ -33,7 +33,7 @@ private:
     std::vector<Color> pixels_;
     unsigned pixelsDrawn_ = 0;
 };
-static_assert(FragmentPainter<TestPainter>, "TestPainter does not fulfil the FragmentPainter concept.");
+static_assert(FragmentPainter<TestPainter>, "TestPainter does not fulfill the FragmentPainter concept.");
 
 struct Vector2i {
     int x;

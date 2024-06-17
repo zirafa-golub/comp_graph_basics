@@ -39,7 +39,7 @@ public:
         void* pixelData_;
     };
 
-    static_assert(PixelPainter<Painter>, "SdlScreen::Painter does not fulfil the PixelPainter concept.");
+    static_assert(PixelPainter<Painter>, "SdlScreen::Painter does not fulfill the PixelPainter concept.");
 
     SdlScreen(SdlScreen&&) = default;
     SdlScreen& operator=(SdlScreen&&) = default;
@@ -89,5 +89,5 @@ private:
     void* pixelData_;
 };
 
-static_assert(Screen<SdlScreen>, "SdlScreen does not fulfil the Screen concept.");
+static_assert(Screen<SdlScreen>, "SdlScreen does not fulfill the Screen concept.");
 } // namespace cg

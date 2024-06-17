@@ -44,5 +44,5 @@ private:
     std::vector<Shape*> sceneShapes_;
 };
 
-static_assert(Renderer<RayTraceRenderer>, "RayTraceRenderer does not fulfil the Renderer concept.");
+static_assert(Renderer<RayTraceRenderer>, "RayTraceRenderer does not fulfill the Renderer concept.");
 } // namespace cg

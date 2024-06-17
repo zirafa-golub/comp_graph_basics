@@ -13,7 +13,8 @@ struct ScreenArchetype {
         unsigned height();
         void paintPixel(unsigned, unsigned, const Color&);
     };
-    static_assert(PixelPainter<PainterArchetype>, "ScreenArchetype::Painter does not fulfil the PixelPainter concept.");
+    static_assert(PixelPainter<PainterArchetype>,
+                  "ScreenArchetype::Painter does not fulfill the PixelPainter concept.");
 
     unsigned width();
     unsigned height();
@@ -21,7 +22,7 @@ struct ScreenArchetype {
     PainterArchetype paintPixels();
     void flush();
 };
-static_assert(Screen<ScreenArchetype>, "ScreenArchetype does not fulfil the Screen concept.");
+static_assert(Screen<ScreenArchetype>, "ScreenArchetype does not fulfill the Screen concept.");
 } // namespace detail
 
 template <typename T>

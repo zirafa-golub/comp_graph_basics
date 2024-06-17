@@ -100,5 +100,5 @@ private:
     }
 };
 
-static_assert(Renderer<RasterizerRenderer>, "RasterizerRenderer does not fulfil the Renderer concept.");
+static_assert(Renderer<RasterizerRenderer>, "RasterizerRenderer does not fulfill the Renderer concept.");
 } // namespace cg
