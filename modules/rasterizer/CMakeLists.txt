@@ -5,7 +5,7 @@ file(GLOB_RECURSE rasterizer_includes "inc/*.h")
 
 target_sources(rasterizer PRIVATE ${rasterizer_sources} ${rasterizer_includes})
 target_include_directories(rasterizer PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc>")
-target_link_libraries(rasterizer PUBLIC renderer core common mesh)
+target_link_libraries(rasterizer PUBLIC renderer core common task mesh)
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}/src" FILES ${rasterizer_sources})
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}/inc" FILES ${rasterizer_includes})
 

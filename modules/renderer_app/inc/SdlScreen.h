@@ -19,7 +19,7 @@ public:
     public:
         Painter(int width, int height, int rowSize, void* pixelData)
             : width_(width), height_(height), rowSize_(rowSize), pixelData_(pixelData) {}
-        void paintPixel(int row, int col, const Color& color) {
+        void paint(int row, int col, const Color& color) {
             uint32_t int32Color = colorToIntArgb(color).asUint32();
 
             uint32_t* destination = reinterpret_cast<uint32_t*>(static_cast<uint8_t*>(pixelData_) +
@@ -50,7 +50,7 @@ public:
     int width() const { return width_; }
     int height() const { return height_; }
 
-    void clearScreen(const Color& color = Color(0, 0, 0));
+    void clear(const Color& color = Color::black());
     Painter paintPixels() { return Painter(width_, height_, rowSize_, pixelData_); }
     void flush();
 

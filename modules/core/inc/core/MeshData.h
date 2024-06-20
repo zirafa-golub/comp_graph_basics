@@ -28,6 +28,7 @@ public:
         std::vector<glm::vec3> vertexNormals;
         std::vector<TriangleData> triangles;
 
+        Data() = default;
         Data(std::vector<Point> vertices_, std::vector<glm::vec3> vertexNormals_, std::vector<TriangleData> triangles_)
             : vertices(std::move(vertices_)), vertexNormals(std::move(vertexNormals_)),
               triangles(std::move(triangles_)) {}

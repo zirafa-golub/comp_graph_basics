@@ -6,14 +6,13 @@
 #include "core/Scene.h"
 #include "rasterizer/BackFaceCuller.h"
 #include "rasterizer/Clipper.h"
-#include "rasterizer/DeptBuffer.h"
+#include "rasterizer/DepthBuffer.h"
 #include "rasterizer/RasterizerShaders.h"
 #include "rasterizer/TriangleRasterizer.h"
 #include "renderer/Renderer.h"
 
 #include "glm/mat4x4.hpp"
 
-#include <limits>
 #include <vector>
 
 namespace cg {
@@ -26,7 +25,13 @@ public:
         BackFaceCuller bfCuller(camera.position());
         FrustumIntersect frustumIntersect(scene.camera().frustumPoints());
         Clipper clipper(frustumIntersect, FrustumIntersect::Near | FrustumIntersect::Far);
-        DepthBuffer depthBuffer(screen.width(), screen.height());
+        if (depthBuffer == nullptr || depthBuffer->width() != screen.width() ||
+            depthBuffer->height() != screen.height()) {
+            depthBuffer = std::make_unique<DepthBuffer>(screen.width(), screen.height());
+        } else {
+            depthBuffer->clear();
+        }
+        glm::mat4 toScreenMatrix = camera.viewportTransform() * camera.projectionTransform() * camera.cameraTransform();
 
         for (Shape* shape : scene.shapes()) {
             const RasterizerShaders& shaders = static_cast<const RasterizerShaders&>(shape->shaderGroup());
@@ -38,10 +43,8 @@ public:
             verticesGlobal.reserve(finalMesh.vertices().size());
             verticesGlobal.assign_range(finalMesh.vertices());
 
-            glm::mat4 toScreenMatrix =
-                camera.viewportTransform() * camera.projectionTransform() * camera.cameraTransform();
             std::vector<float> invertedW = verticesToScreenSpace(toScreenMatrix, finalMesh);
-            FragPainter fragPainter(screen.paintPixels(), depthBuffer, scene, *shape);
+            FragPainter fragPainter(screen.paintPixels(), *depthBuffer, scene, *shape);
             rasterizeMesh(finalMesh, verticesGlobal, invertedW, fragPainter);
         }
     }
@@ -65,7 +68,7 @@ private:
                 pixelColor += reflectedLight * light->illuminate(frag.pos3d, frag.normal);
             }
             pixelColor += scene_.ambientLight() * shape_.ambientReflectance();
-            painter_.paintPixel(frag.y, frag.x, pixelColor);
+            painter_.paint(frag.y, frag.x, pixelColor);
         }
         int width() { return painter_.width(); }
         int height() { return painter_.height(); }
@@ -98,6 +101,8 @@ private:
                 fragPainter);
         }
     }
+
+    std::unique_ptr<DepthBuffer> depthBuffer;
 };
 
 static_assert(Renderer<RasterizerRenderer>, "RasterizerRenderer does not fulfill the Renderer concept.");

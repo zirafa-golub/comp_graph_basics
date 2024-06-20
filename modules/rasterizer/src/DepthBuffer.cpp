@@ -1,15 +1,12 @@
-#include "rasterizer/DeptBuffer.h"
+#include "rasterizer/DepthBuffer.h"
 
 #include <algorithm>
 #include <cassert>
 
 namespace cg {
-
-DepthBuffer::DepthBuffer(int width, int height) : width_(width), height_(height) {
+DepthBuffer::DepthBuffer(int width, int height) : width_(width), height_(height), buffer_(width_ * height_, farthest) {
     assert(width_ > 0);
     assert(height_ > 0);
-
-    buffer_.resize(width_ * height_, farthest);
 }
 
 bool DepthBuffer::updateIfNearer(int x, int y, float newDepth) {

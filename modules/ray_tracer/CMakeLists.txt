@@ -5,7 +5,7 @@ file(GLOB_RECURSE ray_tracer_includes "inc/*.h")
 
 target_sources(ray_tracer PRIVATE ${ray_tracer_sources} ${ray_tracer_includes})
 target_include_directories(ray_tracer PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc>")
-target_link_libraries(ray_tracer PUBLIC renderer core common)
+target_link_libraries(ray_tracer PUBLIC renderer core common task)
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}/src" FILES ${ray_tracer_sources})
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}/inc" FILES ${ray_tracer_includes})
 

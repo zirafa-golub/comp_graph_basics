@@ -10,6 +10,7 @@
 #include "core/Sphere.h"
 #include "mesh/MeshGenerator.h"
 #include "rasterizer/RasterizerRenderer.h"
+#include "rasterizer/RasterizerRendererParallel.h"
 #include "RasterizerShaderFactory.h"
 #include "ray_tracer/RayTraceRenderer.h"
 #include "RayTracerShaderFactory.h"
@@ -47,7 +48,7 @@ int main(int argc, char* argv[]) {
 
     SdlScreen screen = std::move(result.value());
 
-    runApp<RasterizerRenderer, RasterizerShaderFactory>(screen);
+    runApp<RayTraceRenderer, RayTracerShaderFactory>(screen);
 
     quit(0);
     return 0;
@@ -103,7 +104,7 @@ void runApp(Screen& screen) {
 
     scene.addShape(std::move(sphere1));
     scene.addShape(std::move(sphere2));
-    scene.addShape(std::move(sphere3));
+    // scene.addShape(std::move(sphere3));
     scene.addShape(std::move(floor));
     scene.addLight(std::move(pointLight1));
     scene.addLight(std::move(pointLight2));
@@ -134,7 +135,7 @@ void runApp(Screen& screen) {
                 break;
             }
         }
-        screen.clearScreen();
+        screen.clear();
 
         renderer.renderScene(scene, screen);
 

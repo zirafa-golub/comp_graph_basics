@@ -3,7 +3,7 @@
 #include <limits>
 
 namespace cg {
-Color RayTraceRenderer::shadeRay(Scene& scene, const Ray& ray, unsigned currBounceCount) {
+Color RayTraceRenderer::shadeRay(Scene& scene, const Ray& ray, unsigned currBounceCount) const {
     Color pixelColor = Color(0, 0, 0);
     auto result = hitScene(ray, 0, std::numeric_limits<float>::infinity());
     if (result.has_value()) {
@@ -37,7 +37,7 @@ Color RayTraceRenderer::shadeRay(Scene& scene, const Ray& ray, unsigned currBoun
     return pixelColor;
 }
 
-std::optional<HitDesc> RayTraceRenderer::hitScene(const Ray& ray, float rayMin, float rayMax) {
+std::optional<HitDesc> RayTraceRenderer::hitScene(const Ray& ray, float rayMin, float rayMax) const {
     std::optional<HitDesc> result = std::nullopt;
     for (auto shape : sceneShapes_) {
         RayTracerShaders& shaderGroup = static_cast<RayTracerShaders&>(shape->shaderGroup());

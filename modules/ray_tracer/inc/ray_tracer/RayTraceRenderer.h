@@ -3,6 +3,7 @@
 #include "core/Scene.h"
 #include "ray_tracer/RayTracerShaders.h"
 #include "renderer/Renderer.h"
+#include "task/TaskGraph.h"
 
 #include <limits>
 
@@ -21,27 +22,31 @@ public:
 
         const Camera& camera = scene.camera();
         auto res = camera.resolution();
-        auto painter = screen.paintPixels();
 
+        TaskBatch batch;
         for (unsigned row = 0; row < res.height; ++row) {
-            for (unsigned col = 0; col < res.width; ++col) {
-                Color pixelColor = shadeRay(scene, camera.castRay(col, row), 0);
-                painter.paintPixel(row, col, pixelColor);
-            }
+            batch.addWork([this, &camera, &scene, painter = screen.paintPixels(), row, width = res.width]() mutable {
+                for (unsigned col = 0; col < width; ++col) {
+                    Color pixelColor = shadeRay(scene, camera.castRay(col, row), 0);
+                    painter.paint(row, col, pixelColor);
+                }
+            });
         }
+        batch.startAndWait(threadPool);
     }
 
     unsigned maxBounces() const;
     void setMaxBounces(unsigned newMaxBounces);
 
 private:
-    Color shadeRay(Scene& scene, const Ray& ray, unsigned currBounceCount);
-    std::optional<HitDesc> hitScene(const Ray& ray, float rayMin, float rayMax);
+    Color shadeRay(Scene& scene, const Ray& ray, unsigned currBounceCount) const;
+    std::optional<HitDesc> hitScene(const Ray& ray, float rayMin, float rayMax) const;
 
     static constexpr float raySurfaceOffset = 0.00005f;
 
     unsigned maxBounces_ = 5;
     std::vector<Shape*> sceneShapes_;
+    ThreadPool threadPool;
 };
 
 static_assert(Renderer<RayTraceRenderer>, "RayTraceRenderer does not fulfill the Renderer concept.");

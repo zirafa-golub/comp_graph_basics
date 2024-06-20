@@ -11,14 +11,14 @@ struct ScreenArchetype {
     struct PainterArchetype {
         unsigned width();
         unsigned height();
-        void paintPixel(unsigned, unsigned, const Color&);
+        void paint(unsigned, unsigned, const Color&);
     };
     static_assert(PixelPainter<PainterArchetype>,
                   "ScreenArchetype::Painter does not fulfill the PixelPainter concept.");
 
     unsigned width();
     unsigned height();
-    void clearScreen(const Color&);
+    void clear(const Color&);
     PainterArchetype paintPixels();
     void flush();
 };

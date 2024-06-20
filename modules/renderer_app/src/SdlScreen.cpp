@@ -34,7 +34,7 @@ std::expected<SdlScreen, Error> SdlScreen::create(int width, int height, SDL_Win
     return SdlScreen(width, height, std::move(renderer), std::move(texture));
 }
 
-void SdlScreen::clearScreen(const Color& color) {
+void SdlScreen::clear(const Color& color) {
     uint32_t int32Color = colorToIntArgb(color).asUint32();
 
     for (int row = 0; row < height_; ++row) {
