@@ -9,16 +9,16 @@ public:
     TimeProfiler() : start(Clock::now()) {}
 
     template <typename Unit = DefaultUnit>
-    Unit time() {
-        return std::chrono::duration_cast<Unit>(Clock::now() - start).count();
+    Unit time() const {
+        return std::chrono::duration_cast<Unit>(Clock::now() - start);
     }
 
     void reset() { start = Clock::now(); }
 
     template <typename Unit = DefaultUnit>
-    int64_t timeAndReset() {
+    Unit timeAndReset() {
         auto now = Clock::now();
-        uint64_t time = std::chrono::duration_cast<Unit>(now - start).count();
+        Unit time = std::chrono::duration_cast<Unit>(now - start);
         start = now;
         return time;
     }

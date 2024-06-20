@@ -5,7 +5,6 @@
 #include "gtest/gtest.h"
 
 #include <iomanip>
-#include <iostream>
 #include <limits>
 
 using namespace cg;

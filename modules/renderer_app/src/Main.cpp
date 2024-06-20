@@ -140,7 +140,7 @@ void runApp(Screen& screen) {
 
         screen.flush();
 
-        auto timeToRenderFrame = profiler.timeAndReset();
+        uint64_t timeToRenderFrame = profiler.timeAndReset().count();
         averageCalc.addEntry(timeToRenderFrame / 1000.0f);
 
         timeElapsed += timeToRenderFrame;
