@@ -3,59 +3,31 @@
 #include "task/MessageQueue.h"
 #include "task/Task.h"
 
-#include <latch>
+#include < vector>
 #include <thread>
 
 namespace cg {
 class ThreadPool {
 public:
-    ThreadPool(unsigned threadCount = std::thread::hardware_concurrency()) {
-        for (unsigned i = 0; i < threadCount; ++i) {
-            threads_.emplace_back([this](const std::stop_token& stopToken) { threadTask(stopToken); });
-        }
-    }
+    using ThreadIndex = int;
+    static constexpr ThreadIndex invalidIndex = -1;
 
-    ~ThreadPool() {
-        std::latch latch(threads_.size() + 1);
-        for (size_t i = 0; i < threads_.size(); ++i) {
-            taskQueue_.post([&latch]() { latch.arrive_and_wait(); });
-        }
-        for (auto& thread : threads_) {
-            thread.request_stop();
-        }
-        latch.count_down();
-    }
+    ThreadPool(unsigned threadCount = std::thread::hardware_concurrency());
+    ~ThreadPool();
 
-    template <typename T>
-    void postTask(T&& task)
-        requires std::invocable<T>
-    {
+    template <TaskCallable T>
+    void postTask(T&& task) {
         taskQueue_.post(std::forward<T>(task));
     }
-    void postTasks(std::vector<Task>& tasks) { taskQueue_.post(tasks); }
-    unsigned threadCount() const { return static_cast<unsigned>(threads_.size()); }
+    void postTasks(std::vector<Task>& tasks);
+    unsigned threadCount() const;
+    static ThreadIndex threadIndex();
 
 private:
-    void threadTask(const std::stop_token& stopToken) {
-        while (!stopToken.stop_requested()) {
-            Task task = taskQueue_.take();
-            if (task) {
-                task();
-            } else {
-                break;
-            }
-        }
+    void threadTask(const std::stop_token& stopToken, int threadIndex);
+    static void setThreadIndex(ThreadIndex index);
 
-        // Drain the queue
-        while (true) {
-            auto optTask = taskQueue_.tryTake();
-            if (optTask.has_value()) {
-                optTask.value()();
-            } else {
-                break;
-            }
-        }
-    }
+    static thread_local ThreadIndex threadIndex_;
 
     MessageQueue<Task> taskQueue_;
     std::vector<std::jthread> threads_;

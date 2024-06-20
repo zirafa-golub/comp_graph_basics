@@ -1,9 +1,11 @@
-add_library(task INTERFACE)
+add_library(task STATIC)
 
+file(GLOB_RECURSE task_sources "src/*.cpp")
 file(GLOB_RECURSE task_includes "inc/*.h")
 
-target_sources(task INTERFACE ${task_includes})
-target_include_directories(task INTERFACE "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc>")
+target_sources(task PRIVATE ${task_sources} ${task_includes})
+target_include_directories(task PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc>")
+source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}/src" FILES ${task_sources})
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}/inc" FILES ${task_includes})
 
 add_executable(task_test)
