@@ -7,3 +7,4 @@ AllowShortEnumsOnASingleLine: false
 AlwaysBreakTemplateDeclarations: true
 InsertBraces: true
 InsertNewlineAtEOF: true
+AllowShortLambdasOnASingleLine: Empty
