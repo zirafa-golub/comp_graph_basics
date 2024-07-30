@@ -9,12 +9,9 @@ Ray OrthogonalCamera::castRay(unsigned pixelX, unsigned pixelY) const {
     assert(pixelX < resolution().width);
     assert(pixelY < resolution().height);
 
-    float left = -viewPlaneSize().width / 2;
-    float bottom = -viewPlaneSize().height / 2;
-    float offsetHor = left + (pixelX + 0.5f) * pixelSize().width;
-    float offsetVer = bottom + (pixelY + 0.5f) * pixelSize().height;
-
-    return Ray(position() + offsetHor * rightVector() + offsetVer * upVector(), viewDirection());
+    return Ray(bottomLeftPixel_ + static_cast<float>(pixelX) * pixelRightVector() +
+                   static_cast<float>(pixelY) * pixelUpVector(),
+               viewDirection());
 }
 
 Camera::FrustumPoints OrthogonalCamera::frustumPoints() const {
@@ -38,12 +35,14 @@ Camera::FrustumPoints OrthogonalCamera::frustumPoints() const {
     return frustum;
 }
 
-const glm::mat4& OrthogonalCamera::projectionTransform() const { return projectionTransform_; }
-
 void OrthogonalCamera::onUpdated() {
     Size2d vps = viewPlaneSize();
 
     // NOTE: Locally, the camera always looks down the -z axis direction
     projectionTransform_ = TransformUtils::viewToCanonicalMatrix(viewPlaneSize(), -viewPlaneDistance(), -viewLimit());
+
+    float left = -viewPlaneSize().width / 2 + 0.5f * pixelSize().width;
+    float bottom = -viewPlaneSize().height / 2 + 0.5f * pixelSize().height;
+    bottomLeftPixel_ = position() + left * rightVector() + bottom * upVector();
 }
 } // namespace cg

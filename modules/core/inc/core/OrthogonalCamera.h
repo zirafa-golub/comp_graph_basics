@@ -11,12 +11,15 @@ public:
 
     FrustumPoints frustumPoints() const override;
 
-    const glm::mat4& projectionTransform() const override;
+    const glm::mat4& projectionTransform() const override { return projectionTransform_; }
 
 protected:
     void onUpdated() override;
 
 private:
     glm::mat4 projectionTransform_;
+
+    // Ray casting helper
+    Point bottomLeftPixel_;
 };
 } // namespace cg

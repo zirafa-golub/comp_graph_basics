@@ -9,6 +9,8 @@ using namespace cg;
 struct TestCamera : public Camera {
     Ray castRay(unsigned pixelX, unsigned pixelY) const override { return Ray({0, 0, 0}, {0, 0, 1}); }
     const glm::vec3& rightVector() { return Camera::rightVector(); }
+    const glm::vec3& pixelRightVector() { return Camera::pixelRightVector(); }
+    const glm::vec3& pixelUpVector() { return Camera::pixelUpVector(); }
     const glm::mat4& projectionTransform() const override { return projectionMatrix_; }
     FrustumPoints frustumPoints() const override { return FrustumPoints{}; }
 
@@ -36,12 +38,16 @@ TEST(CameraTest, modify_shouldApplyModificationAfterUpdate) {
 
     camera.update();
 
+    Size2d expectedPixelSize(initPixelSize.width / 4, initPixelSize.height / 9);
+
     EXPECT_EQ(camera.resolution(), newRes);
     EXPECT_EQ(camera.viewPlaneSize(), newViewPlane);
     assertVec3FloatEqual(camera.viewDirection(), glm::vec3(-1, 0, 0));
     assertVec3FloatEqual(camera.rightVector(), glm::vec3({0, 1, 0}));
+    assertVec3FloatEqual(camera.pixelRightVector(), glm::vec3({0, expectedPixelSize.width, 0}));
     assertVec3FloatEqual(camera.upVector(), glm::vec3({0, 0, 1}));
-    EXPECT_EQ(camera.pixelSize(), Size2d(initPixelSize.width / 4, initPixelSize.height / 9));
+    assertVec3FloatEqual(camera.pixelUpVector(), glm::vec3({0, 0, expectedPixelSize.height}));
+    EXPECT_EQ(camera.pixelSize(), expectedPixelSize);
 }
 
 TEST(CameraTest, setViewDirection_shouldUpdateViewVectorsAfterUpdate) {
